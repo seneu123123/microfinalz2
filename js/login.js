@@ -116,24 +116,68 @@ labelEl.className = "password-strength-label " + cssClass;
 const DEMO_OTP_CODE = "123456";
 
 function handleLogin(e) {
-e.preventDefault()
+    e.preventDefault()
 
-const email = document.getElementById("loginEmail").value
-const password = document.getElementById("loginPassword").value
+    const email = document.getElementById("loginEmail").value
+    const password = document.getElementById("loginPassword").value
 
-console.log("Login:", { email, password })
-console.log("About to redirect to: admin/dashboard.php")
+    // Show loading state
+    const submitBtn = e.target.querySelector('button[type="submit"]')
+    const originalText = submitBtn.innerHTML
+    submitBtn.disabled = true
+    submitBtn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Signing in...'
+    window.lucide.createIcons()
 
-Swal.fire({
-icon: "success",
-title: "Login successful (demo)",
-text: "Welcome back, " + email + "!",
-confirmButtonColor: "#2ca078",
-confirmButtonText: "Go to dashboard"
-}).then(() => {
-console.log("Swal confirmed, redirecting to admin/dashboard.php")
-window.location.href = "admin/dashboard.php"
-})
+    // Call login API
+    const formData = new FormData()
+    formData.append('email', email)
+    formData.append('password', password)
+
+    fetch('api/login.php?action=login', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Store user data for OTP verification
+            sessionStorage.setItem('pendingUser', JSON.stringify(data.data.user))
+            
+            // Show OTP popup
+            showOtpPopup()
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Successful',
+                text: data.message,
+                confirmButtonColor: '#2ca078',
+                timer: 3000,
+                timerProgressBar: true
+            })
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: data.message,
+                confirmButtonColor: '#2ca078'
+            })
+        }
+    })
+    .catch(error => {
+        console.error('Login error:', error)
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred during login. Please try again.',
+            confirmButtonColor: '#2ca078'
+        })
+    })
+    .finally(() => {
+        // Restore button state
+        submitBtn.disabled = false
+        submitBtn.innerHTML = originalText
+        window.lucide.createIcons()
+    })
 }
 
 // Register Form Handler
@@ -418,37 +462,81 @@ function initOtp() {
                 return;
             }
             
-            // DEMO ONLY 
-            if (otpCode === '123456') { 
-                const otpCodeInput = document.getElementById('otpCode');
-                if (otpCodeInput) {
-                    otpCodeInput.value = otpCode;
-                }
-                hideOtpPopup();
-                
-                // SUCCESS MESSAGE 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Email Verified',
-                    text: 'Your email has been successfully verified!',
-                    confirmButtonColor: '#2ca078',
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-                
-                // HIDE 
-                const otpSection = document.getElementById('otpSection');
-                if (otpSection) {
-                    otpSection.style.display = 'none';
-                }
-            } else {
+            // Get pending user data
+            const pendingUser = JSON.parse(sessionStorage.getItem('pendingUser') || '{}');
+            
+            if (!pendingUser.id) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Invalid OTP',
-                    text: 'The code you entered is incorrect. Please try again.',
+                    title: 'Session Error',
+                    text: 'Please login again',
                     confirmButtonColor: '#2ca078'
                 });
+                hideOtpPopup();
+                return;
             }
+            
+            // Show loading state
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+            const originalText = verifyBtn.innerHTML;
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Verifying...';
+            window.lucide.createIcons();
+            
+            // Verify OTP with API
+            const formData = new FormData();
+            formData.append('user_id', pendingUser.id);
+            formData.append('otp', otpCode);
+            
+            fetch('api/login.php?action=verify_otp', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Clear pending user data
+                    sessionStorage.removeItem('pendingUser');
+                    
+                    // Hide OTP popup
+                    hideOtpPopup();
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful',
+                        text: 'Welcome back, ' + data.data.user.name + '!',
+                        confirmButtonColor: '#2ca078',
+                        timer: 2000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        // Redirect to dashboard
+                        window.location.href = data.data.redirect_url;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid OTP',
+                        text: data.message,
+                        confirmButtonColor: '#2ca078'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('OTP verification error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred during verification. Please try again.',
+                    confirmButtonColor: '#2ca078'
+                });
+            })
+            .finally(() => {
+                // Restore button state
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = originalText;
+                window.lucide.createIcons();
+            });
         });
     }
     
@@ -457,26 +545,78 @@ function initOtp() {
         resendOtp.addEventListener('click', (e) => {
             e.preventDefault();
             
-            // LOADING
+            // Get pending user data
+            const pendingUser = JSON.parse(sessionStorage.getItem('pendingUser') || '{}');
+            
+            if (!pendingUser.email) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Session Error',
+                    text: 'Please login again',
+                    confirmButtonColor: '#2ca078'
+                });
+                hideOtpPopup();
+                return;
+            }
+            
+            // Show loading state
             resendOtp.style.display = 'none';
             const otpTimer = document.getElementById('otpTimer');
             if (otpTimer) {
                 otpTimer.textContent = 'Sending...';
             }
 
-            setTimeout(() => {
-                generateOtpInputs();
-                startOtpTimer();
-                
+            // Resend OTP with API
+            const formData = new FormData();
+            formData.append('email', pendingUser.email);
+            
+            fetch('api/login.php?action=resend_otp', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    generateOtpInputs();
+                    startOtpTimer();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'New OTP Sent',
+                        text: data.message,
+                        confirmButtonColor: '#2ca078',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                } else {
+                    // Show error and restore resend button
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Resend Failed',
+                        text: data.message,
+                        confirmButtonColor: '#2ca078'
+                    });
+                    
+                    resendOtp.style.display = 'inline';
+                    if (otpTimer) {
+                        otpTimer.textContent = '';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Resend OTP error:', error);
                 Swal.fire({
-                    icon: 'success',
-                    title: 'New OTP Sent',
-                    text: 'A new verification code has been sent to your email',
-                    confirmButtonColor: '#2ca078',
-                    timer: 3000,
-                    timerProgressBar: true
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while resending OTP. Please try again.',
+                    confirmButtonColor: '#2ca078'
                 });
-            }, 1000);
+                
+                resendOtp.style.display = 'inline';
+                if (otpTimer) {
+                    otpTimer.textContent = '';
+                }
+            });
         });
     }
 }

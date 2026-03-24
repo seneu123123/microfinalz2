@@ -1431,20 +1431,13 @@ $page = 'requisition.php';
 
 
   <script>
-
+      // Global variables
+      let itemList = [];
+      let editItemList = [];
+      let requisitionMgr;
 
 
     lucide.createIcons();
-
-
-
-    let itemList = []; 
-
-
-
-    let editItemList = [];
-
-
 
 
 
@@ -2443,303 +2436,217 @@ $page = 'requisition.php';
 
 
     // Initialize requisition management
-
-
-
     let requisitionMgr;
 
-
-
     document.addEventListener('DOMContentLoaded', () => {
-
-
-
       requisitionMgr = new RequisitionManagement();
-
-
-
     });
 
-
-
-
-
-
-
-    // Add Requisition Modal (using SweetAlert)
-
-
-
     function openReqModal() {
-
-
-
       itemList = []; 
 
-
-
       Swal.fire({
-
-
-
-        title: "New Requisition",
-
-
-
-        width: "700px",
-
-
-
+        title: '<div style="display: flex; align-items: center; gap: 10px;"><i data-lucide="file-plus" style="width: 24px; height: 24px; color: #2ca078;"></i><span>New Requisition</span></div>',
+        width: "800px",
         html: `
+          <div style="text-align:left; font-family: inherit;">
+            
+            <!-- Form Section -->
+            <div style="background: #f8fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+              <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                <i data-lucide="target" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; color: #6b7280;"></i>
+                Purpose / Project Name
+              </label>
+              <input id="req-remarks" class="swal2-input" placeholder="e.g., Office Supplies Q1 2024, Marketing Campaign Materials..." 
+                     style="margin: 0; width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: all 0.2s; background: white;">
+            </div>
 
-
-
-          <div style="text-align:left; margin-bottom:10px;">
-
-
-
-              <label style="font-size:12px; font-weight:600; color:#666;">Purpose / Project Name</label>
-
-
-
-              <input id="req-remarks" class="swal2-input" placeholder="e.g., Office Supplies Q1" style="margin: 5px 0 15px 0;">
-
-
-
-              
-
-
-
-              <h4 style="margin-top:20px; border-bottom:1px solid #eee; padding-bottom:5px;">Items</h4>
-
-
-
-              <div id="item-container" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div>
-
-
-
-              
-
-
-
-              <div style="display:flex; gap:10px; margin-top:10px;">
-
-
-
-                  <input id="new-item" placeholder="Item Name" class="swal2-input" style="margin:0; flex:2;">
-
-
-
-                  <input id="new-qty" type="number" placeholder="Qty" class="swal2-input" style="margin:0; flex:1;">
-
-
-
-                  <input id="new-unit" placeholder="Unit" class="swal2-input" style="margin:0; flex:1;">
-
-
-
-                  <button type="button" onclick="addItem()" class="btn btn-primary" style="padding:0 15px;">+</button>
-
-
-
+            <!-- Items Section -->
+            <div style="background: #f8fafb; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h4 style="margin: 0; font-size: 16px; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="package" style="width: 18px; height: 18px; color: #2ca078;"></i>
+                  Items Required
+                </h4>
+                <span id="item-count" style="background: #2ca078; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                  0 items
+                </span>
               </div>
+              
+              <!-- Items Container -->
+              <div id="item-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 16px; min-height: 60px;">
+                <div style="display: flex; align-items: center; justify-content: center; height: 60px; color: #9ca3af; font-size: 14px;">
+                  <i data-lucide="inbox" style="width: 24px; height: 24px; margin-right: 8px;"></i>
+                  No items added yet. Add your first item below.
+                </div>
+              </div>
+              
+              <!-- Add Item Form -->
+              <div style="background: white; border-radius: 8px; padding: 16px; border: 2px dashed #d1d5db;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; align-items: end;">
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 4px;">Item Name</label>
+                    <input id="new-item" placeholder="e.g., Laptop, Paper, Pens..." 
+                           class="swal2-input" style="margin: 0; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;">
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 4px;">Quantity</label>
+                    <input id="new-qty" type="number" placeholder="Qty" min="1"
+                           class="swal2-input" style="margin: 0; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;">
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 4px;">Unit</label>
+                    <input id="new-unit" placeholder="e.g., pcs, box, set" 
+                           class="swal2-input" style="margin: 0; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;">
+                  </div>
+                  <button type="button" onclick="addItem()" 
+                          style="background: #2ca078; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; transition: all 0.2s; height: fit-content;">
+                    <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
 
-
+            <!-- Help Text -->
+            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; margin-top: 16px; border-radius: 4px;">
+              <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <i data-lucide="info" style="width: 16px; height: 16px; color: #3b82f6; margin-top: 2px;"></i>
+                <div style="font-size: 12px; color: #1e40af;">
+                  <strong>Tip:</strong> Be specific with item names and quantities to ensure accurate processing. Include units like "pcs", "boxes", "sets", etc.
+                </div>
+              </div>
+            </div>
 
           </div>
-
-
-
         `,
-
-
-
-        confirmButtonText: "Submit Request",
-
-
-
+        confirmButtonText: '<i data-lucide="send" style="width: 16px; height: 16px; margin-right: 6px;"></i>Submit Request',
         confirmButtonColor: "#2ca078",
-
-
-
         showCancelButton: true,
-
-
-
+        cancelButtonText: '<i data-lucide="x" style="width: 16px; height: 16px; margin-right: 6px;"></i>Cancel',
         preConfirm: () => {
-
-
-
-          if (itemList.length === 0) return Swal.showValidationMessage("Please add at least one item");
-
-
-
-          return { remarks: document.getElementById("req-remarks").value, items: itemList };
-
-
-
-        },
-
-
-
-      }).then(async (result) => {
-
-
-
-        if (result.isConfirmed && result.value) {
-
-
-
-          const success = await requisitionMgr.addRequisition(result.value);
-
-
-
-          if (success) {
-
-
-
-            // Success message shown through requisitionMgr.showSuccess()
-
-
-
+          if (itemList.length === 0) {
+            Swal.showValidationMessage("Please add at least one item to continue");
+            return false;
           }
+          const remarks = document.getElementById("req-remarks").value;
+          if (!remarks.trim()) {
+            Swal.showValidationMessage("Please specify the purpose or project name");
+            return false;
+          }
+          return { remarks: remarks.trim(), items: itemList };
+        },
+        didOpen: () => {
+          // Reinitialize Lucide icons for the modal content
+          lucide.createIcons();
+          
+          // Add input focus effects
+          const inputs = document.querySelectorAll('.swal2-input');
+          inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+              input.style.borderColor = '#2ca078';
+              input.style.boxShadow = '0 0 0 3px rgba(44, 160, 120, 0.1)';
+            });
+            input.addEventListener('blur', () => {
+              input.style.borderColor = '#d1d5db';
+              input.style.boxShadow = 'none';
+            });
+          });
 
+          // Add Enter key support for adding items
+          document.getElementById('new-item').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addItem();
+          });
+          document.getElementById('new-qty').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addItem();
+          });
+          document.getElementById('new-unit').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addItem();
+          });
 
-
+          // Focus on first input
+          setTimeout(() => document.getElementById('req-remarks').focus(), 300);
         }
-
-
-
+      }).then(async (result) => {
+        if (result.isConfirmed && result.value) {
+          const success = await requisitionMgr.addRequisition(result.value);
+          if (success) {
+            Swal.fire({
+              title: 'Requisition Added Successfully!',
+              text: 'Your requisition has been added successfully.',
+              icon: 'success',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#2ca078'
+            });
+          }
+        }
       });
-
-
 
     }
 
-
-
-
-
-
-
     // Add item function
-
-
-
     window.addItem = function () {
-
-
-
       const name = document.getElementById("new-item").value;
-
-
-
       const qty = document.getElementById("new-qty").value;
-
-
-
       const unit = document.getElementById("new-unit").value;
-
-
 
       if (!name || !qty) return;
 
-
-
       itemList.push({ name, qty, unit });
-
-
-
       renderItems();
 
-
-
       document.getElementById("new-item").value = "";
-
-
-
       document.getElementById("new-qty").value = "";
-
-
-
+      document.getElementById("new-unit").value = "";
       document.getElementById("new-item").focus();
-
-
-
     };
 
-
-
-
-
-
-
     // Render items function
-
-
-
     function renderItems() {
-
-
-
       const container = document.getElementById("item-container");
+      const itemCount = document.getElementById("item-count");
 
-
-
-      if (itemList.length === 0) {
-
-
-
-        container.innerHTML = '<span style="color:#aaa; font-size:12px;">No items added yet.</span>';
-
-
-
-        return;
-
-
-
+      // Update item count
+      if (itemCount) {
+        itemCount.textContent = `${itemList.length} item${itemList.length !== 1 ? 's' : ''}`;
       }
 
-
+      if (itemList.length === 0) {
+        container.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; height: 60px; color: #9ca3af; font-size: 14px;">
+            <i data-lucide="inbox" style="width: 24px; height: 24px; margin-right: 8px;"></i>
+            No items added yet. Add your first item below.
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
 
       container.innerHTML = itemList.map((item, index) => `
-
-
-
-          <div class="item-row">
-
-
-
-              <span style="font-weight:500;">${item.name}</span>
-
-
-
-              <span>${item.qty}</span>
-
-
-
-              <span style="color:#666; font-size:12px;">${item.unit}</span>
-
-
-
-              <span class="remove-btn" onclick="itemList.splice(${index},1); renderItems()">×</span>
-
-
-
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; hover:background: #f9fafb;">
+          <div style="flex: 2; font-weight: 500; color: #374151;">
+            <i data-lucide="package-2" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; color: #6b7280;"></i>
+            ${item.name}
           </div>
-
-
-
+          <div style="flex: 1; text-align: center; font-weight: 600; color: #2ca078; background: rgba(44, 160, 120, 0.1); padding: 4px 8px; border-radius: 6px;">
+            ${item.qty}
+          </div>
+          <div style="flex: 1; text-align: center; color: #6b7280; font-size: 12px; font-style: italic;">
+            ${item.unit || 'unit'}
+          </div>
+          <button onclick="itemList.splice(${index},1); renderItems()" 
+                  style="background: #ef4444; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; hover:background: #dc2626;">
+            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+          </button>
+        </div>
       `).join("");
 
-
-
+      // Reinitialize Lucide icons
+      lucide.createIcons();
     }
 
 
-
   </script>
-
 
 
 </body>

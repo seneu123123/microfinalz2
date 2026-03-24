@@ -2265,65 +2265,38 @@
       // Load purchase requisitions
 
       async loadPurchaseRequisitions() {
-
         try {
-
           console.log('Loading purchase requisitions...');
-
           const response = await fetch(this.requisitionApiUrl, {
-
             method: 'GET',
-
             headers: {
-
               'Content-Type': 'application/json',
-
               'Accept': 'application/json'
-
             }
-
           });
 
-
-
           if (!response.ok) {
-
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-
           }
-
-
 
           const result = await response.json();
-
           console.log('Requisitions API Response:', result);
-
-
-
+          console.log('Response status:', result.status);
+          console.log('Response data:', result.data);
+          
           if (result.status === 'success') {
-
             this.requisitions = result.data || [];
-
             console.log('Loaded requisitions:', this.requisitions.length);
-
+            console.log('Requisition details:', this.requisitions);
           } else {
-
             this.showError('Failed to load requisitions: ' + result.message);
-
           }
-
           this.displayPurchaseRequisitions();
-
         } catch (error) {
-
           console.error('Load requisitions error:', error);
-
           this.showError('Error loading requisitions: ' + error.message);
-
           this.displayPurchaseRequisitions(); // Show empty state
-
         }
-
       }
 
 

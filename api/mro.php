@@ -108,6 +108,58 @@ $page = 'mro.php';
 
       fetchAssets();
       loadRequests();
+      
+function completeWorkOrder(workOrderId) {
+    Swal.fire({
+        title: 'Complete Work Order?',
+        text: "This will instantly close the MRO task and update the vehicle's status to 'Active' in the Fleet system.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2ca07a', // Matching your system's green theme
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, complete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            // Prepare the data to send
+            const formData = new FormData();
+            formData.append('work_order_id', workOrderId);
+
+            // Send to our new backend processor
+            fetch('process_mro_completion.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire(
+                        'Completed!',
+                        data.message,
+                        'success'
+                    ).then(() => {
+                        location.reload(); // Refresh the page to show the updated status
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        data.message,
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Network Error',
+                    'Could not connect to the server to update the Fleet system.',
+                    'error'
+                );
+            });
+        }
+    })
+}
+
     </script>
   </body>
 </html>
