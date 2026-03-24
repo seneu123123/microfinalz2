@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Findings & Observations Review</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <style>
+    /* Basic Submenu CSS to ensure it hides/shows properly if not already in your CSS */
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      grid-column: 1 / -1;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    .findings-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .findings-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .findings-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .findings-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .findings-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .findings-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .severity-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .severity-critical {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .severity-high {
+      background: rgba(249, 115, 22, 0.15);
+      color: #f97316;
+    }
+
+    .severity-medium {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .severity-low {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-add {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .btn-add:hover {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-attach {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-attach:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-severity {
+      background: rgba(249, 115, 22, 0.1);
+      color: #f97316;
+      border: 1px solid #f97316;
+    }
+
+    .btn-severity:hover {
+      background: #f97316;
+      color: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.3s;
+    }
+
+    .modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn-modal-cancel {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: var(--border-color);
+    }
+
+    .btn-modal-confirm {
+      background: var(--brand-green);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-confirm:hover {
+      background: #1d8659;
+    }
+
+    .evidence-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .evidence-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor">
+          <i data-lucide="store"></i>
+          <span>Vendor Portal</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle">
+          <i data-lucide="truck"></i>
+          <span>Vehicle Reservation</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit">
+          <i data-lucide="clipboard-check"></i>
+          <span>Audit Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet">
+          <i data-lucide="car"></i>
+          <span>Fleet Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document">
+          <i data-lucide="file-text"></i>
+          <span>Document Tracking</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">SETTINGS</span>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Configuration</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="shield"></i>
+          <span>Security</span>
+        </a>
+
+        <a href="../login.html" class="nav-item">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <img src="../img/profile.png" alt="User">
+        </div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <button class="user-menu-btn">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1>Findings & Observations Review</h1>
+          <p>Review audit findings and manage observations</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search findings...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">3.4 Findings & Observations Review</h3>
+              <p class="card-subtitle">Review and manage audit findings</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="successAlert" class="alert alert-success">
+              <i data-lucide="check-circle"></i> Finding saved successfully!
+            </div>
+            <div id="errorAlert" class="alert alert-error">
+              <i data-lucide="alert-circle"></i> <span id="errorMessage">Please fill all required fields</span>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="search"></i> Add New Finding</h4>
+              <form id="findingForm" class="form-grid">
+                <div class="form-group">
+                  <label>Finding ID (Auto-Generated)</label>
+                  <input type="text" id="findingId" disabled placeholder="FND-00001">
+                </div>
+                <div class="form-group">
+                  <label>Audit ID <span style="color: #ef4444;">*</span></label>
+                  <select id="auditId" required>
+                    <option value="">Select Audit</option>
+                    <!-- Will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Finding Category <span style="color: #ef4444;">*</span></label>
+                  <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="Compliance">Compliance Issue</option>
+                    <option value="Financial">Financial Irregularity</option>
+                    <option value="Operational">Operational Deficiency</option>
+                    <option value="Control">Control Weakness</option>
+                    <option value="Documentation">Documentation Gap</option>
+                    <option value="Process">Process Inefficiency</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Severity <span style="color: #ef4444;">*</span></label>
+                  <select id="severity" required>
+                    <option value="">Select Severity</option>
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Date Identified <span style="color: #ef4444;">*</span></label>
+                  <input type="date" id="dateIdentified" required>
+                </div>
+                <div class="form-group">
+                  <label>Department/Area Affected <span style="color: #ef4444;">*</span></label>
+                  <input type="text" id="department" placeholder="Department or area" required>
+                </div>
+                <div class="form-group form-row">
+                  <label>Finding Description <span style="color: #ef4444;">*</span></label>
+                  <textarea id="description" placeholder="Describe the finding in detail" required></textarea>
+                </div>
+                <div class="form-group form-row">
+                  <label>Recommendation</label>
+                  <textarea id="recommendation" placeholder="Provide recommendations for addressing this finding"></textarea>
+                </div>
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="plus-circle"></i> Add Finding
+                  </button>
+                  <button type="reset" class="btn btn-secondary">
+                    <i data-lucide="refresh-cw"></i> Clear Form
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="list"></i> Existing Findings</h4>
+              <table class="findings-table" id="findingsTable">
+                <thead>
+                  <tr>
+                    <th>Finding ID</th>
+                    <th>Audit ID</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Department</th>
+                    <th>Severity</th>
+                    <th>Date Identified</th>
+                    <th>Evidence</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="findingsTableBody">
+                  <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-secondary);">No findings recorded yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Attach Evidence Modal -->
+  <div id="attachEvidenceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Attach Evidence</h2>
+        <button class="modal-close" id="closeAttachModal">&times;</button>
+      </div>
+      <form id="attachEvidenceForm" class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label>Finding ID (Read-only)</label>
+            <input type="text" id="attachFindingId" disabled>
+          </div>
+          <div class="form-group">
+            <label>Evidence Type <span style="color: #ef4444;">*</span></label>
+            <select id="evidenceType" required>
+              <option value="">Select Evidence Type</option>
+              <option value="Document">Document</option>
+              <option value="Photo">Photo</option>
+              <option value="Video">Video</option>
+              <option value="Audio">Audio Recording</option>
+              <option value="Screenshot">Screenshot</option>
+              <option value="Email">Email Correspondence</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Evidence Description</label>
+            <textarea id="evidenceDescription" placeholder="Describe the evidence being attached"></textarea>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>File Upload <span style="color: #ef4444;">*</span></label>
+            <input type="file" id="evidenceFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.mp3" required>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" id="cancelAttachBtn">Cancel</button>
+        <button class="btn-modal-confirm" id="attachBtn">Attach Evidence</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Severity Modal -->
+  <div id="updateSeverityModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Update Severity</h2>
+        <button class="modal-close" id="closeSeverityModal">&times;</button>
+      </div>
+      <form id="updateSeverityForm" class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label>Finding ID (Read-only)</label>
+            <input type="text" id="severityFindingId" disabled>
+          </div>
+          <div class="form-group">
+            <label>Current Severity</label>
+            <input type="text" id="currentSeverity" disabled>
+          </div>
+          <div class="form-group">
+            <label>New Severity <span style="color: #ef4444;">*</span></label>
+            <select id="newSeverity" required>
+              <option value="">Select Severity</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Reason for Change</label>
+            <textarea id="severityReason" placeholder="Explain why the severity level is being changed"></textarea>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" id="cancelSeverityBtn">Cancel</button>
+        <button class="btn-modal-confirm" id="updateSeverityBtn">Update Severity</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboard.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Audit Findings Management System
+    class AuditFindings {
+      constructor() {
+        this.findings = [];
+        this.apiUrl = '../api/audit-findings.php';
+        this.loadFindings();
+        this.loadAuditOptions();
+      }
+
+      // Load findings from API
+      async loadFindings() {
+        try {
+          console.log('Loading findings from:', this.apiUrl);
+          const response = await fetch(this.apiUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log('API Response:', result);
+
+          if (result.success) {
+            this.findings = result.data || [];
+            console.log('Loaded findings:', this.findings.length);
+          } else {
+            this.showError('Failed to load findings: ' + result.message);
+          }
+          this.displayFindings();
+        } catch (error) {
+          console.error('Load findings error:', error);
+          this.showError('Error loading findings: ' + error.message);
+        }
+      }
+
+      // Load audit options
+      async loadAuditOptions() {
+        try {
+          const response = await fetch('../api/audit-schedule.php');
+          const result = await response.json();
+          
+          if (result.success) {
+            const auditSelect = document.getElementById('auditId');
+            auditSelect.innerHTML = '<option value="">Select Audit</option>';
+            
+            result.data.forEach(audit => {
+              const option = document.createElement('option');
+              option.value = audit.audit_id;
+              option.textContent = `${audit.audit_id} - ${audit.audit_title}`;
+              auditSelect.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error('Error loading audit options:', error);
+        }
+      }
+
+      // Show success message
+      showSuccess(message = 'Finding saved successfully') {
+        const alert = document.getElementById('successAlert');
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 4000);
+      }
+
+      // Show error message
+      showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 4000);
+      }
+
+      // Handle form submission
+      async handleSubmit(e) {
+        e.preventDefault();
+        
+        const formData = {
+          audit_id: document.getElementById('auditId').value,
+          category: document.getElementById('category').value,
+          severity: document.getElementById('severity').value,
+          date_identified: document.getElementById('dateIdentified').value,
+          department: document.getElementById('department').value,
+          description: document.getElementById('description').value,
+          recommendation: document.getElementById('recommendation').value
+        };
+
+        // Validate required fields
+        if (!formData.audit_id || !formData.category || !formData.severity || !formData.date_identified || !formData.department || !formData.description) {
+          this.showError('Please fill all required fields');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Finding added successfully with ID: ' + result.data.finding_id);
+            document.getElementById('findingForm').reset();
+            this.loadFindings();
+          } else {
+            this.showError('Failed to add finding: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error adding finding: ' + error.message);
+        }
+      }
+
+      // Display findings in table
+      displayFindings() {
+        const tbody = document.getElementById('findingsTableBody');
+
+        if (this.findings.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-secondary);">No findings recorded yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.findings.map(finding => `
+          <tr>
+            <td><strong>${finding.finding_id}</strong></td>
+            <td>${finding.audit_id}</td>
+            <td>${finding.category}</td>
+            <td>${finding.description.substring(0, 100)}${finding.description.length > 100 ? '...' : ''}</td>
+            <td>${finding.department}</td>
+            <td>
+              <span class="severity-badge severity-${finding.severity.toLowerCase()}">
+                ${finding.severity}
+              </span>
+            </td>
+            <td>${finding.date_identified ? new Date(finding.date_identified).toLocaleDateString() : '-'}</td>
+            <td>
+              <div class="evidence-list">
+                ${finding.evidence_count ? `<i data-lucide="paperclip"></i> ${finding.evidence_count} files` : 'No evidence'}
+              </div>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-attach" data-finding-id="${finding.finding_id}" onclick="auditFindings.showAttachEvidence('${finding.finding_id}')">
+                  <i data-lucide="paperclip" class="lucide-icon"></i> Attach Evidence
+                </button>
+                <button class="btn-action btn-severity" data-finding-id="${finding.finding_id}" onclick="auditFindings.showUpdateSeverity('${finding.finding_id}')">
+                  <i data-lucide="alert-triangle" class="lucide-icon"></i> Mark Severity
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      // Show attach evidence modal
+      showAttachEvidence(findingId) {
+        const finding = this.findings.find(f => f.finding_id === findingId);
+        if (!finding) {
+          this.showError('Finding not found');
+          return;
+        }
+
+        document.getElementById('attachFindingId').value = finding.finding_id;
+        document.getElementById('evidenceType').value = '';
+        document.getElementById('evidenceDescription').value = '';
+        document.getElementById('evidenceFile').value = '';
+
+        this.currentAttachFindingId = findingId;
+        document.getElementById('attachEvidenceModal').classList.add('show');
+      }
+
+      // Show update severity modal
+      showUpdateSeverity(findingId) {
+        const finding = this.findings.find(f => f.finding_id === findingId);
+        if (!finding) {
+          this.showError('Finding not found');
+          return;
+        }
+
+        document.getElementById('severityFindingId').value = finding.finding_id;
+        document.getElementById('currentSeverity').value = finding.severity;
+        document.getElementById('newSeverity').value = finding.severity;
+        document.getElementById('severityReason').value = '';
+
+        this.currentSeverityFindingId = findingId;
+        document.getElementById('updateSeverityModal').classList.add('show');
+      }
+
+      // Attach evidence
+      async attachEvidence() {
+        const formData = new FormData();
+        formData.append('finding_id', document.getElementById('attachFindingId').value);
+        formData.append('evidence_type', document.getElementById('evidenceType').value);
+        formData.append('description', document.getElementById('evidenceDescription').value);
+        formData.append('file', document.getElementById('evidenceFile').files[0]);
+
+        if (!formData.get('file')) {
+          this.showError('Please select a file to attach');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl + '/attach-evidence', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Evidence attached successfully');
+            document.getElementById('attachEvidenceModal').classList.remove('show');
+            this.loadFindings();
+          } else {
+            this.showError('Failed to attach evidence: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error attaching evidence: ' + error.message);
+        }
+      }
+
+      // Update severity
+      async updateSeverity() {
+        const formData = {
+          finding_id: document.getElementById('severityFindingId').value,
+          new_severity: document.getElementById('newSeverity').value,
+          reason: document.getElementById('severityReason').value
+        };
+
+        if (!formData.new_severity) {
+          this.showError('Please select a new severity level');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl + '/update-severity', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Severity updated successfully');
+            document.getElementById('updateSeverityModal').classList.remove('show');
+            this.loadFindings();
+          } else {
+            this.showError('Failed to update severity: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error updating severity: ' + error.message);
+        }
+      }
+
+      // Setup modal event listeners
+      setupModalListeners() {
+        // Attach evidence modal
+        document.getElementById('closeAttachModal').addEventListener('click', () => {
+          document.getElementById('attachEvidenceModal').classList.remove('show');
+        });
+
+        document.getElementById('cancelAttachBtn').addEventListener('click', () => {
+          document.getElementById('attachEvidenceModal').classList.remove('show');
+        });
+
+        document.getElementById('attachBtn').addEventListener('click', () => {
+          this.attachEvidence();
+        });
+
+        // Update severity modal
+        document.getElementById('closeSeverityModal').addEventListener('click', () => {
+          document.getElementById('updateSeverityModal').classList.remove('show');
+        });
+
+        document.getElementById('cancelSeverityBtn').addEventListener('click', () => {
+          document.getElementById('updateSeverityModal').classList.remove('show');
+        });
+
+        document.getElementById('updateSeverityBtn').addEventListener('click', () => {
+          this.updateSeverity();
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+          const attachModal = document.getElementById('attachEvidenceModal');
+          const severityModal = document.getElementById('updateSeverityModal');
+          if (e.target === attachModal) {
+            attachModal.classList.remove('show');
+          }
+          if (e.target === severityModal) {
+            severityModal.classList.remove('show');
+          }
+        });
+      }
+    }
+
+    // Initialize on page load
+    let auditFindings;
+    document.addEventListener('DOMContentLoaded', () => {
+      auditFindings = new AuditFindings();
+      auditFindings.setupModalListeners();
+
+      // Setup form submission
+      document.getElementById('findingForm').addEventListener('submit', (e) => {
+        auditFindings.handleSubmit(e);
+      });
+    });
+  </script>
+</body>
+
+</html>

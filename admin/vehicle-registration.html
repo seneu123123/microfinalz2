@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Registration & Data Administration</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .form-section h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .form-group input:disabled {
+      background: var(--bg-secondary);
+      cursor: not-allowed;
+    }
+
+    /* Button Styles */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .data-table th {
+      background: var(--bg-secondary);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .data-table tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-inactive {
+      background: rgba(107, 114, 128, 0.15);
+      color: #6b7280;
+    }
+
+    .status-maintenance {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-retired {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-edit {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-edit:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Alert Styles */
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i data-lucide="sun"></i><i
+      data-lucide="moon"></i></button>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper"><img src="../img/logo.png" alt="Logo" class="logo"></div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2><span class="app-tagline">32005</span>
+        </div>
+      </div><button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="panel-left-close"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section"><span class="nav-section-title">MAIN MENU</span><a href="dashboard.html"
+          class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a><a href="#"
+          class="nav-item has-submenu" data-module="vendor"><i data-lucide="store"></i><span>Vendor Portal</span><i
+            data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-vendor"><a href="vendor-registration.html" class="submenu-item">1.1 Vendor
+            Registration Administration</a><a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile
+            Management</a><a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance
+            Review</a><a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a><a
+            href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a><a
+            href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a></div><a href="#"
+          class="nav-item has-submenu" data-module="vehicle"><i data-lucide="truck"></i><span>Vehicle
+            Reservation</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-vehicle"><a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle
+            Inventory Administration</a><a href="reservation-request.html" class="submenu-item">2.2 Reservation Request
+            Review & Approval</a><a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle
+            Assignment</a><a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule
+            Management</a><a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a><a
+            href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a></div><a href="#"
+          class="nav-item has-submenu" data-module="audit"><i data-lucide="clipboard-check"></i><span>Audit
+            Management</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-audit"><a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule
+            Administration</a><a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist
+            Configuration</a><a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a><a
+            href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a><a
+            href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a><a
+            href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a></div><a href="#"
+          class="nav-item has-submenu" data-module="fleet"><i data-lucide="car"></i><span>Fleet Management</span><i
+            data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-fleet"><a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle
+            Registration & Data Administration</a><a href="maintenance-schedule.html" class="submenu-item">4.2
+            Maintenance Schedule Oversight</a><a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage
+            Monitoring</a><a href="service-repair.html" class="submenu-item">4.4 Service & Repair History
+            Administration</a><a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal
+            Tracking</a><a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a></div><a
+          href="#" class="nav-item has-submenu" data-module="document"><i data-lucide="file-text"></i><span>Document
+            Tracking</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-document"><a href="document-intake.html" class="submenu-item">5.1 Document
+            Intake & Classification</a><a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing
+            Administration</a><a href="document-access.html" class="submenu-item">5.3 Access Control & Permission
+            Management</a><a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version
+            Tracking</a><a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a><a
+            href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a></div>
+      </div>
+      <div class="nav-section"><span class="nav-section-title">SETTINGS</span><a href="#" class="nav-item"><i
+            data-lucide="settings"></i><span>Configuration</span></a><a href="#" class="nav-item"><i
+            data-lucide="shield"></i><span>Security</span></a><a href="../login.html" class="nav-item"><i
+            data-lucide="log-out"></i><span>Logout</span></a></div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar"><img src="../img/profile.png" alt="User"></div>
+        <div class="user-info"><span class="user-name">John Doe</span><span class="user-role">Administrator</span></div>
+        <button class="user-menu-btn"><i data-lucide="more-vertical"></i></button>
+      </div>
+    </div>
+  </aside>
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left"><button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
+        <div class="header-title">
+          <h1>Vehicle Registration & Data Administration</h1>
+          <p>Manage vehicle registration data</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box"><i data-lucide="search"></i><input type="search" placeholder="Search..."></div><button
+          class="icon-btn"><i data-lucide="bell"></i></button>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Vehicle Registration Management</h3>
+              <p class="card-subtitle">Register and manage vehicle information</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Success/Error Alerts -->
+            <div id="successAlert" class="alert alert-success" style="display:none;">
+              <i data-lucide="check-circle"></i> <span id="successMessage">Operation successful</span>
+            </div>
+            <div id="errorAlert" class="alert alert-error" style="display:none;">
+              <i data-lucide="alert-circle"></i> <span id="errorMessage">Error occurred</span>
+            </div>
+
+            <!-- Vehicle Registration Form -->
+            <div class="form-section">
+              <h4><i data-lucide="plus-circle"></i> Register New Vehicle</h4>
+              <form id="vehicleRegistrationForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                  <div class="form-group">
+                    <label>Vehicle ID <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="vehicleId" placeholder="VEH-001" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Plate Number <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="plateNumber" placeholder="ABC-1234" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Vehicle Type <span style="color: #ef4444;">*</span></label>
+                    <select id="vehicleType" required>
+                      <option value="">Select Type</option>
+                      <option value="Sedan">Sedan</option>
+                      <option value="SUV">SUV</option>
+                      <option value="Van">Van</option>
+                      <option value="Truck">Truck</option>
+                      <option value="Motorcycle">Motorcycle</option>
+                      <option value="Bus">Bus</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Make <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="make" placeholder="Toyota" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Model <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="model" placeholder="Camry" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Year <span style="color: #ef4444;">*</span></label>
+                    <input type="number" id="year" placeholder="2023" min="1900" max="2030" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Status <span style="color: #ef4444;">*</span></label>
+                    <select id="status" required>
+                      <option value="">Select Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Maintenance">Maintenance</option>
+                      <option value="Retired">Retired</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i> Register Vehicle
+                  </button>
+                  <button type="reset" class="btn btn-secondary">
+                    <i data-lucide="refresh-cw"></i> Clear Form
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Vehicle List Table -->
+            <div class="form-section">
+              <h4><i data-lucide="list"></i> Registered Vehicles</h4>
+              <div class="table-container">
+                <table class="data-table" id="vehicleTable">
+                  <thead>
+                    <tr>
+                      <th>Vehicle ID</th>
+                      <th>Plate Number</th>
+                      <th>Type</th>
+                      <th>Make/Model</th>
+                      <th>Year</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vehicleTableBody">
+                    <tr>
+                      <td colspan="7" style="text-align: center; padding: 2rem;">
+                        Loading vehicles...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit Vehicle Modal -->
+  <div id="editVehicleModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2>Edit Vehicle Information</h2>
+        <button class="modal-close" id="closeEditModal">&times;</button>
+      </div>
+      <form id="editVehicleForm" class="modal-body">
+        <input type="hidden" id="editVehicleId">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label>Vehicle ID (Read-only)</label>
+            <input type="text" id="editVehicleIdDisplay" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Plate Number <span style="color: #ef4444;">*</span></label>
+            <input type="text" id="editPlateNumber" required>
+          </div>
+
+          <div class="form-group">
+            <label>Vehicle Type <span style="color: #ef4444;">*</span></label>
+            <select id="editVehicleType" required>
+              <option value="">Select Type</option>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Van">Van</option>
+              <option value="Truck">Truck</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Bus">Bus</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Make <span style="color: #ef4444;">*</span></label>
+            <input type="text" id="editMake" required>
+          </div>
+
+          <div class="form-group">
+            <label>Model <span style="color: #ef4444;">*</span></label>
+            <input type="text" id="editModel" required>
+          </div>
+
+          <div class="form-group">
+            <label>Year <span style="color: #ef4444;">*</span></label>
+            <input type="number" id="editYear" min="1900" max="2030" required>
+          </div>
+
+          <div class="form-group">
+            <label>Status <span style="color: #ef4444;">*</span></label>
+            <select id="editStatus" required>
+              <option value="">Select Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Retired">Retired</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+            <i data-lucide="x"></i> Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="save"></i> Update Vehicle
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    lucide.createIcons();
+
+    class VehicleRegistrationManager {
+      constructor() {
+        this.vehicles = [];
+        this.apiUrl = '../api/vehicles.php';
+        this.init();
+      }
+
+      async init() {
+        await this.loadVehicles();
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        // Form submission
+        document.getElementById('vehicleRegistrationForm').addEventListener('submit', (e) => this.registerVehicle(e));
+        document.getElementById('editVehicleForm').addEventListener('submit', (e) => this.updateVehicle(e));
+
+        // Modal controls
+        document.getElementById('closeEditModal').addEventListener('click', () => this.closeEditModal());
+        document.getElementById('cancelEditBtn').addEventListener('click', () => this.closeEditModal());
+
+        // Close modal on outside click
+        document.getElementById('editVehicleModal').addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) {
+            this.closeEditModal();
+          }
+        });
+      }
+
+      generateVehicleId() {
+        const prefix = 'VEH-';
+        let max = 0;
+        this.vehicles.forEach(v => {
+          const m = (v.vehicle_id || '').match(/(\d+)$/);
+          if (m) {
+            const n = parseInt(m[1], 10);
+            if (!isNaN(n) && n > max) max = n;
+          }
+        });
+        return prefix + String(max + 1).padStart(3, '0');
+      }
+
+      async registerVehicle(e) {
+        e.preventDefault();
+
+        const formData = {
+          vehicle_id: document.getElementById('vehicleId').value || this.generateVehicleId(),
+          plate_number: document.getElementById('plateNumber').value,
+          vehicle_type: document.getElementById('vehicleType').value,
+          make: document.getElementById('make').value,
+          model: document.getElementById('model').value,
+          year: document.getElementById('year').value,
+          status: document.getElementById('status').value
+        };
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Vehicle registered successfully');
+            document.getElementById('vehicleRegistrationForm').reset();
+            document.getElementById('vehicleId').value = this.generateVehicleId();
+            await this.loadVehicles();
+          } else {
+            this.showError(result.message || 'Registration failed');
+          }
+        } catch (error) {
+          this.showError('Network error: ' + error.message);
+        }
+      }
+
+      async loadVehicles() {
+        try {
+          const response = await fetch(this.apiUrl);
+          const result = await response.json();
+
+          if (result.success) {
+            this.vehicles = result.data || [];
+            this.displayVehicles();
+          } else {
+            this.showError('Failed to load vehicles');
+          }
+        } catch (error) {
+          this.showError('Network error: ' + error.message);
+        }
+      }
+
+      displayVehicles() {
+        const tbody = document.getElementById('vehicleTableBody');
+
+        if (!this.vehicles.length) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                No vehicles registered yet
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = this.vehicles.map(vehicle => `
+          <tr>
+            <td><strong>${vehicle.vehicle_id}</strong></td>
+            <td>${vehicle.plate_number}</td>
+            <td>${vehicle.vehicle_type}</td>
+            <td>${vehicle.make} ${vehicle.model}</td>
+            <td>${vehicle.year}</td>
+            <td>
+              <span class="status-badge status-${vehicle.status.toLowerCase()}">
+                ${vehicle.status}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit" onclick="vehicleMgr.editVehicle('${vehicle.vehicle_id}')">
+                  <i data-lucide="edit"></i> Edit
+                </button>
+                <button class="btn-action btn-delete" onclick="vehicleMgr.deleteVehicle('${vehicle.vehicle_id}')">
+                  <i data-lucide="trash-2"></i> Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      editVehicle(vehicleId) {
+        const vehicle = this.vehicles.find(v => v.vehicle_id === vehicleId);
+        if (!vehicle) return;
+
+        // Populate edit form
+        document.getElementById('editVehicleId').value = vehicle.vehicle_id;
+        document.getElementById('editVehicleIdDisplay').value = vehicle.vehicle_id;
+        document.getElementById('editPlateNumber').value = vehicle.plate_number || '';
+        document.getElementById('editVehicleType').value = vehicle.vehicle_type || '';
+        document.getElementById('editMake').value = vehicle.make || '';
+        document.getElementById('editModel').value = vehicle.model || '';
+        document.getElementById('editYear').value = vehicle.year || '';
+        document.getElementById('editStatus').value = vehicle.status || '';
+
+        // Show modal
+        document.getElementById('editVehicleModal').style.display = 'flex';
+      }
+
+      closeEditModal() {
+        document.getElementById('editVehicleModal').style.display = 'none';
+      }
+
+      async updateVehicle(e) {
+        e.preventDefault();
+
+        const formData = {
+          vehicle_id: document.getElementById('editVehicleId').value,
+          plate_number: document.getElementById('editPlateNumber').value,
+          vehicle_type: document.getElementById('editVehicleType').value,
+          make: document.getElementById('editMake').value,
+          model: document.getElementById('editModel').value,
+          year: document.getElementById('editYear').value,
+          status: document.getElementById('editStatus').value
+        };
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Vehicle updated successfully');
+            this.closeEditModal();
+            await this.loadVehicles();
+          } else {
+            this.showError(result.message || 'Update failed');
+          }
+        } catch (error) {
+          this.showError('Network error: ' + error.message);
+        }
+      }
+
+      async deleteVehicle(vehicleId) {
+        if (!confirm('Are you sure you want to delete this vehicle?')) return;
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vehicle_id: vehicleId })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Vehicle deleted successfully');
+            await this.loadVehicles();
+          } else {
+            this.showError(result.message || 'Delete failed');
+          }
+        } catch (error) {
+          this.showError('Network error: ' + error.message);
+        }
+      }
+
+      showSuccess(message) {
+        const alert = document.getElementById('successAlert');
+        document.getElementById('successMessage').textContent = message;
+        alert.style.display = 'block';
+        setTimeout(() => {
+          alert.style.display = 'none';
+        }, 3000);
+      }
+
+      showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.style.display = 'block';
+        setTimeout(() => {
+          alert.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // Initialize the application
+    let vehicleMgr;
+    document.addEventListener('DOMContentLoaded', () => {
+      vehicleMgr = new VehicleRegistrationManager();
+
+      // Set initial vehicle ID
+      document.getElementById('vehicleId').value = vehicleMgr.generateVehicleId();
+    });
+  </script>
+</body>
+
+</html>

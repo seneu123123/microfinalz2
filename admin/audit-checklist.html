@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Checklist Configuration</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        /* Basic Submenu CSS */
+        .submenu {
+            display: none;
+            flex-direction: column;
+            padding-left: 2.5rem;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .submenu.active {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .submenu-item:hover {
+            color: var(--brand-green);
+        }
+
+        .chevron {
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+
+        .nav-item.active .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 2rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section h4 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--brand-green);
+            box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            grid-column: 1 / -1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            grid-column: 1 / -1;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--brand-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d8659;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-warning {
+            background: rgba(249, 115, 22, 0.1);
+            color: #f97316;
+            border: 1px solid #f97316;
+        }
+
+        .btn-warning:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        .checklist-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .checklist-table thead {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .checklist-table th {
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .checklist-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .checklist-table tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .checklist-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(44, 160, 120, 0.15);
+            color: var(--brand-green);
+        }
+
+        .status-inactive {
+            background: rgba(156, 163, 175, 0.15);
+            color: #6b7280;
+        }
+
+        .status-draft {
+            background: rgba(249, 115, 22, 0.15);
+            color: #f97316;
+        }
+
+        .audit-type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-internal {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+
+        .type-external {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+        }
+
+        .type-regulatory {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .type-compliance {
+            background: rgba(251, 146, 60, 0.15);
+            color: #f97316;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: rgba(44, 160, 120, 0.1);
+            color: var(--brand-green);
+            border: 1px solid var(--brand-green);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .btn-edit:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-modal-cancel {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-cancel:hover {
+            background: var(--border-color);
+        }
+
+        .btn-modal-confirm {
+            background: var(--brand-green);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-confirm:hover {
+            background: #1d8659;
+        }
+
+        .btn-modal-danger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-danger:hover {
+            background: #dc2626;
+        }
+
+        .checklist-items {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input[type="text"] {
+            flex: 1;
+            margin-right: 0.5rem;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .btn-remove-item {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-remove-item:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-add-item {
+            background: rgba(44, 160, 120, 0.1);
+            color: var(--brand-green);
+            border: 1px solid var(--brand-green);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-add-item:hover {
+            background: var(--brand-green);
+            color: white;
+        }
+
+        .items-preview {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .items-preview ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .items-preview li {
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <i data-lucide="sun" class="sun-icon"></i>
+        <i data-lucide="moon" class="moon-icon"></i>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-wrapper">
+                    <img src="../img/logo.png" alt="Logo" class="logo">
+                </div>
+                <div class="logo-text">
+                    <h2 class="app-name">Microfinance</h2>
+                    <span class="app-tagline">32005</span>
+                </div>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i data-lucide="panel-left-close"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <span class="nav-section-title">MAIN MENU</span>
+
+                <a href="dashboard.html" class="nav-item">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="#" class="nav-item has-submenu" data-module="vendor">
+                    <i data-lucide="store"></i>
+                    <span>Vendor Portal</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </a>
+                <div class="submenu" id="submenu-vendor">
+                    <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+                    <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+                    <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+                    <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+                    <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+                    <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+                </div>
+
+                <a href="#" class="nav-item has-submenu" data-module="vehicle">
+                    <i data-lucide="truck"></i>
+                    <span>Vehicle Reservation</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </a>
+                <div class="submenu" id="submenu-vehicle">
+                    <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+                    <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+                    <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+                    <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+                    <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+                    <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+                </div>
+
+                <a href="#" class="nav-item has-submenu" data-module="audit">
+                    <i data-lucide="clipboard-check"></i>
+                    <span>Audit Management</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </a>
+                <div class="submenu" id="submenu-audit">
+                    <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+                    <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+                    <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+                    <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+                    <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+                    <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+                </div>
+
+                <a href="#" class="nav-item has-submenu" data-module="fleet">
+                    <i data-lucide="car"></i>
+                    <span>Fleet Management</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </a>
+                <div class="submenu" id="submenu-fleet">
+                    <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+                    <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+                    <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+                    <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+                    <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+                    <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+                </div>
+
+                <a href="#" class="nav-item has-submenu" data-module="document">
+                    <i data-lucide="file-text"></i>
+                    <span>Document Tracking</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </a>
+                <div class="submenu" id="submenu-document">
+                    <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+                    <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+                    <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+                    <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+                    <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+                    <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-section-title">SETTINGS</span>
+
+                <a href="#" class="nav-item">
+                    <i data-lucide="settings"></i>
+                    <span>Configuration</span>
+                </a>
+
+                <a href="#" class="nav-item">
+                    <i data-lucide="shield"></i>
+                    <span>Security</span>
+                </a>
+
+                <a href="../login.html" class="nav-item">
+                    <i data-lucide="log-out"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img src="../img/profile.png" alt="User">
+                </div>
+                <div class="user-info">
+                    <span class="user-name">John Doe</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+                <button class="user-menu-btn">
+                    <i data-lucide="more-vertical"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="header-title">
+                    <h1>Audit Checklist Configuration</h1>
+                    <p>Create and manage audit checklists</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="search" placeholder="Search checklists...">
+                </div>
+                <button class="icon-btn">
+                    <i data-lucide="bell"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="content-grid">
+                <div class="content-card" style="grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">3.2 Audit Checklist Configuration</h3>
+                            <p class="card-subtitle">Create and manage audit checklists</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="successAlert" class="alert alert-success">
+                            <i data-lucide="check-circle"></i> <span id="successMessage">Checklist created successfully!</span>
+                        </div>
+                        <div id="errorAlert" class="alert alert-error">
+                            <i data-lucide="alert-circle"></i> <span id="errorMessage">Please fill all required fields</span>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i data-lucide="plus-circle"></i> Create New Checklist</h4>
+                            <form id="checklistForm" class="form-grid">
+                                <div class="form-group">
+                                    <label>Checklist ID (Auto-Generated)</label>
+                                    <input type="text" id="checklistId" disabled placeholder="CHK-00001">
+                                </div>
+                                <div class="form-group">
+                                    <label>Checklist Name <span style="color: #ef4444;">*</span></label>
+                                    <input type="text" id="checklistName" placeholder="Enter checklist name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Audit Type <span style="color: #ef4444;">*</span></label>
+                                    <select id="auditType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Internal">Internal Audit</option>
+                                        <option value="External">External Audit</option>
+                                        <option value="Regulatory">Regulatory Audit</option>
+                                        <option value="Compliance">Compliance Audit</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Department <span style="color: #ef4444;">*</span></label>
+                                    <select id="department" required>
+                                        <option value="">Select Department</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Operations">Operations</option>
+                                        <option value="IT">IT</option>
+                                        <option value="HR">Human Resources</option>
+                                        <option value="Compliance">Compliance</option>
+                                        <option value="Vendor Management">Vendor Management</option>
+                                        <option value="Fleet Management">Fleet Management</option>
+                                        <option value="Document Tracking">Document Tracking</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status <span style="color: #ef4444;">*</span></label>
+                                    <select id="status" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Draft">Draft</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Created By <span style="color: #ef4444;">*</span></label>
+                                    <input type="text" id="createdBy" placeholder="Enter creator name" required>
+                                </div>
+                                <div class="form-group form-row">
+                                    <label>Checklist Items <span style="color: #ef4444;">*</span></label>
+                                    <div class="checklist-items" id="checklistItems">
+                                        <div class="checklist-item">
+                                            <input type="text" placeholder="Enter checklist item" class="item-text">
+                                            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                                <input type="checkbox" class="item-required"> Required
+                                            </label>
+                                            <button type="button" class="btn-remove-item" onclick="auditChecklist.removeItem(this)">
+                                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-add-item" onclick="auditChecklist.addItem()">
+                                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add Item
+                                    </button>
+                                </div>
+                                <div class="button-group">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i data-lucide="save"></i> Create Checklist
+                                    </button>
+                                    <button type="reset" class="btn btn-secondary">
+                                        <i data-lucide="refresh-cw"></i> Clear Form
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i data-lucide="list"></i> Existing Checklists</h4>
+                            <table class="checklist-table" id="checklistTable">
+                                <thead>
+                                    <tr>
+                                        <th>Checklist ID</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Items Count</th>
+                                        <th>Created By</th>
+                                        <th>Created At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="checklistTableBody">
+                                    <tr>
+                                        <td colspan="9" style="text-align: center; color: var(--text-secondary);">Loading checklists...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Checklist Modal -->
+    <div id="editChecklistModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Audit Checklist</h2>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <form id="editChecklistForm" class="modal-body">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Checklist ID (Read-only)</label>
+                        <input type="text" id="editChecklistId" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Checklist Name <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="editChecklistName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Audit Type <span style="color: #ef4444;">*</span></label>
+                        <select id="editAuditType" required>
+                            <option value="">Select Type</option>
+                            <option value="Internal">Internal Audit</option>
+                            <option value="External">External Audit</option>
+                            <option value="Regulatory">Regulatory Audit</option>
+                            <option value="Compliance">Compliance Audit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Department <span style="color: #ef4444;">*</span></label>
+                        <select id="editDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Operations">Operations</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">Human Resources</option>
+                            <option value="Compliance">Compliance</option>
+                            <option value="Vendor Management">Vendor Management</option>
+                            <option value="Fleet Management">Fleet Management</option>
+                            <option value="Document Tracking">Document Tracking</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status <span style="color: #ef4444;">*</span></label>
+                        <select id="editStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Draft">Draft</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Checklist Items <span style="color: #ef4444;">*</span></label>
+                        <div class="checklist-items" id="editChecklistItems">
+                            <!-- Items will be populated dynamically -->
+                        </div>
+                        <button type="button" class="btn-add-item" onclick="auditChecklist.addEditItem()">
+                            <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Add Item
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="cancelEditBtn">Cancel</button>
+                <button class="btn-modal-confirm" id="saveEditBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Audit Checklist</h2>
+                <button class="modal-close" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this audit checklist?</p>
+                <p><strong id="deleteChecklistId"></strong></p>
+                <p id="deleteChecklistName"></p>
+                <p style="color: #ef4444; margin-top: 1rem;">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn-modal-danger" id="confirmDeleteBtn">Delete Checklist</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/dashboard.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Audit Checklist Management System
+        class AuditChecklist {
+            constructor() {
+                this.checklists = [];
+                this.apiUrl = '../api/audit-checklist.php';
+                this.loadChecklists();
+            }
+
+            // Load checklists from API
+            async loadChecklists() {
+                try {
+                    console.log('Loading audit checklists from:', this.apiUrl);
+                    const response = await fetch(this.apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    console.log('API Response:', result);
+
+                    if (result.success) {
+                        this.checklists = result.data || [];
+                        console.log('Loaded checklists:', this.checklists.length);
+                    } else {
+                        this.showError('Failed to load audit checklists: ' + result.message);
+                    }
+                    this.displayChecklists();
+                } catch (error) {
+                    console.error('Load checklists error:', error);
+                    this.showError('Error loading audit checklists: ' + error.message);
+                }
+            }
+
+            // Show success message
+            showSuccess(message = 'Checklist created successfully') {
+                const alert = document.getElementById('successAlert');
+                document.getElementById('successMessage').textContent = message;
+                alert.classList.add('show');
+                setTimeout(() => alert.classList.remove('show'), 4000);
+            }
+
+            // Show error message
+            showError(message) {
+                const alert = document.getElementById('errorAlert');
+                document.getElementById('errorMessage').textContent = message;
+                alert.classList.add('show');
+                setTimeout(() => alert.classList.remove('show'), 4000);
+            }
+
+            // Get checklist items from form
+            getChecklistItems(containerId) {
+                const container = document.getElementById(containerId);
+                const items = [];
+                const itemElements = container.querySelectorAll('.checklist-item');
+                
+                itemElements.forEach(element => {
+                    const text = element.querySelector('.item-text').value.trim();
+                    const required = element.querySelector('.item-required').checked;
+                    
+                    if (text) {
+                        items.push({
+                            item: text,
+                            required: required
+                        });
+                    }
+                });
+                
+                return items;
+            }
+
+            // Set checklist items in form
+            setChecklistItems(containerId, items) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                
+                if (items && items.length > 0) {
+                    items.forEach(item => {
+                        const itemElement = this.createItemElement(item.item, item.required);
+                        container.appendChild(itemElement);
+                    });
+                } else {
+                    // Add one empty item
+                    container.appendChild(this.createItemElement('', false));
+                }
+                
+                lucide.createIcons();
+            }
+
+            // Create item element
+            createItemElement(text = '', required = false) {
+                const div = document.createElement('div');
+                div.className = 'checklist-item';
+                div.innerHTML = `
+                    <input type="text" placeholder="Enter checklist item" class="item-text" value="${text}">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" class="item-required" ${required ? 'checked' : ''}> Required
+                    </label>
+                    <button type="button" class="btn-remove-item" onclick="auditChecklist.removeItem(this)">
+                        <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                    </button>
+                `;
+                return div;
+            }
+
+            // Add item to checklist
+            addItem() {
+                const container = document.getElementById('checklistItems');
+                const itemElement = this.createItemElement('', false);
+                container.appendChild(itemElement);
+                lucide.createIcons();
+            }
+
+            // Add item to edit checklist
+            addEditItem() {
+                const container = document.getElementById('editChecklistItems');
+                const itemElement = this.createItemElement('', false);
+                container.appendChild(itemElement);
+                lucide.createIcons();
+            }
+
+            // Remove item from checklist
+            removeItem(button) {
+                const container = button.closest('.checklist-items');
+                if (container.children.length > 1) {
+                    button.closest('.checklist-item').remove();
+                } else {
+                    this.showError('At least one checklist item is required');
+                }
+            }
+
+            // Handle form submission
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                const items = this.getChecklistItems('checklistItems');
+                
+                if (items.length === 0) {
+                    this.showError('At least one checklist item is required');
+                    return;
+                }
+                
+                const formData = {
+                    checklist_name: document.getElementById('checklistName').value,
+                    audit_type: document.getElementById('auditType').value,
+                    department: document.getElementById('department').value,
+                    checklist_items: items,
+                    status: document.getElementById('status').value,
+                    created_by: document.getElementById('createdBy').value
+                };
+
+                // Validate required fields
+                if (!formData.checklist_name || !formData.audit_type || !formData.department || !formData.status || !formData.created_by) {
+                    this.showError('Please fill all required fields');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(this.apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showSuccess('Checklist created successfully with ID: ' + result.data.checklist_id);
+                        document.getElementById('checklistForm').reset();
+                        this.setChecklistItems('checklistItems', []);
+                        this.loadChecklists();
+                    } else {
+                        this.showError('Failed to create checklist: ' + result.message);
+                    }
+                } catch (error) {
+                    this.showError('Error creating checklist: ' + error.message);
+                }
+            }
+
+            // Display checklists in table
+            displayChecklists() {
+                const tbody = document.getElementById('checklistTableBody');
+
+                if (this.checklists.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-secondary);">No audit checklists found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = this.checklists.map(checklist => {
+                    const statusClass = checklist.status.toLowerCase();
+                    const typeClass = checklist.audit_type.toLowerCase();
+                    const itemsCount = checklist.checklist_items ? JSON.parse(checklist.checklist_items).length : 0;
+                    
+                    return `
+                        <tr>
+                            <td><strong>${checklist.checklist_id}</strong></td>
+                            <td>${checklist.checklist_name}</td>
+                            <td>
+                                <span class="audit-type-badge type-${typeClass}">
+                                    ${checklist.audit_type}
+                                </span>
+                            </td>
+                            <td>${checklist.department}</td>
+                            <td>
+                                <span class="status-badge status-${statusClass}">
+                                    ${checklist.status}
+                                </span>
+                            </td>
+                            <td>${itemsCount}</td>
+                            <td>${checklist.created_by}</td>
+                            <td>${checklist.created_at ? new Date(checklist.created_at).toLocaleDateString() : '-'}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-edit" data-checklist-id="${checklist.checklist_id}" onclick="auditChecklist.showEditModal('${checklist.checklist_id}')">
+                                        <i data-lucide="edit" class="lucide-icon"></i> Edit
+                                    </button>
+                                    <button class="btn-action btn-delete" data-checklist-id="${checklist.checklist_id}" onclick="auditChecklist.showDeleteModal('${checklist.checklist_id}')">
+                                        <i data-lucide="trash-2" class="lucide-icon"></i> Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                lucide.createIcons();
+            }
+
+            // Show edit modal
+            showEditModal(checklistId) {
+                const checklist = this.checklists.find(c => c.checklist_id === checklistId);
+                if (!checklist) {
+                    this.showError('Audit checklist not found');
+                    return;
+                }
+
+                // Populate edit form
+                document.getElementById('editChecklistId').value = checklist.checklist_id;
+                document.getElementById('editChecklistName').value = checklist.checklist_name;
+                document.getElementById('editAuditType').value = checklist.audit_type;
+                document.getElementById('editDepartment').value = checklist.department;
+                document.getElementById('editStatus').value = checklist.status;
+
+                // Set checklist items
+                const items = checklist.checklist_items ? JSON.parse(checklist.checklist_items) : [];
+                this.setChecklistItems('editChecklistItems', items);
+
+                document.getElementById('editChecklistModal').classList.add('show');
+            }
+
+            // Show delete modal
+            showDeleteModal(checklistId) {
+                const checklist = this.checklists.find(c => c.checklist_id === checklistId);
+                if (!checklist) {
+                    this.showError('Audit checklist not found');
+                    return;
+                }
+
+                document.getElementById('deleteChecklistId').textContent = checklist.checklist_id;
+                document.getElementById('deleteChecklistName').textContent = checklist.checklist_name;
+
+                document.getElementById('deleteModal').classList.add('show');
+            }
+
+            // Save edit
+            async saveEdit() {
+                const items = this.getChecklistItems('editChecklistItems');
+                
+                if (items.length === 0) {
+                    this.showError('At least one checklist item is required');
+                    return;
+                }
+                
+                const formData = {
+                    checklist_id: document.getElementById('editChecklistId').value,
+                    checklist_name: document.getElementById('editChecklistName').value,
+                    audit_type: document.getElementById('editAuditType').value,
+                    department: document.getElementById('editDepartment').value,
+                    checklist_items: items,
+                    status: document.getElementById('editStatus').value
+                };
+
+                // Validate required fields
+                if (!formData.checklist_name || !formData.audit_type || !formData.department || !formData.status) {
+                    this.showError('Please fill all required fields');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(this.apiUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showSuccess('Checklist updated successfully');
+                        document.getElementById('editChecklistModal').classList.remove('show');
+                        this.loadChecklists();
+                    } else {
+                        this.showError('Failed to update checklist: ' + result.message);
+                    }
+                } catch (error) {
+                    this.showError('Error updating checklist: ' + error.message);
+                }
+            }
+
+            // Delete checklist
+            async deleteChecklist() {
+                const checklistId = document.getElementById('deleteChecklistId').textContent;
+
+                try {
+                    const response = await fetch(`${this.apiUrl}?checklist_id=${encodeURIComponent(checklistId)}`, {
+                        method: 'DELETE'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showSuccess('Checklist deleted successfully');
+                        document.getElementById('deleteModal').classList.remove('show');
+                        this.loadChecklists();
+                    } else {
+                        this.showError('Failed to delete checklist: ' + result.message);
+                    }
+                } catch (error) {
+                    this.showError('Error deleting checklist: ' + error.message);
+                }
+            }
+
+            // Setup modal event listeners
+            setupModalListeners() {
+                // Edit modal
+                document.getElementById('closeEditModal').addEventListener('click', () => {
+                    document.getElementById('editChecklistModal').classList.remove('show');
+                });
+
+                document.getElementById('cancelEditBtn').addEventListener('click', () => {
+                    document.getElementById('editChecklistModal').classList.remove('show');
+                });
+
+                document.getElementById('saveEditBtn').addEventListener('click', () => {
+                    this.saveEdit();
+                });
+
+                // Delete modal
+                document.getElementById('closeDeleteModal').addEventListener('click', () => {
+                    document.getElementById('deleteModal').classList.remove('show');
+                });
+
+                document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+                    document.getElementById('deleteModal').classList.remove('show');
+                });
+
+                document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+                    this.deleteChecklist();
+                });
+
+                // Close modal when clicking outside
+                window.addEventListener('click', (e) => {
+                    const editModal = document.getElementById('editChecklistModal');
+                    const deleteModal = document.getElementById('deleteModal');
+                    
+                    if (e.target === editModal) {
+                        editModal.classList.remove('show');
+                    }
+                    if (e.target === deleteModal) {
+                        deleteModal.classList.remove('show');
+                    }
+                });
+            }
+        }
+
+        // Initialize on page load
+        let auditChecklist;
+        document.addEventListener('DOMContentLoaded', () => {
+            auditChecklist = new AuditChecklist();
+            auditChecklist.setupModalListeners();
+
+            // Setup form submission
+            document.getElementById('checklistForm').addEventListener('submit', (e) => {
+                auditChecklist.handleSubmit(e);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contract & Document Oversight</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <style>
+    /* Basic Submenu CSS to ensure it hides/shows properly if not already in your CSS */
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0,0,0,0.02);
+    }
+    .submenu.active {
+      display: flex;
+    }
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .form-group input:disabled {
+      background: var(--bg-secondary);
+      cursor: not-allowed;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      grid-column: 1 / -1;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    .vendor-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .vendor-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .vendor-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .vendor-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .vendor-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .vendor-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-draft {
+      background: rgba(155, 155, 155, 0.15);
+      color: #999;
+    }
+
+    .status-pending {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-approved {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-rejected {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .action-buttons { display: flex; gap: 0.5rem; align-items: center; }
+    .btn-action { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; }
+    .btn-edit { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid #3b82f6; }
+    .btn-edit:hover { background: #3b82f6; color: white; }
+    .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+    .btn-delete:hover { background: #ef4444; color: white; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); animation: fadeIn 0.3s; }
+    .modal.show { display: flex; justify-content: center; align-items: center; }
+    .modal-content { background: #ffffff; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); animation: slideIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h2 { margin: 0; color: var(--text-primary); }
+    .modal-close { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: color 0.2s; }
+    .modal-close:hover { color: var(--text-primary); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 1rem; }
+    .btn-modal-cancel { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .btn-modal-cancel:hover { background: var(--border-color); }
+    .btn-modal-confirm { background: var(--brand-green); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .btn-modal-confirm:hover { background: #1d8659; }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+        
+        <a href="dashboard.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor">
+          <i data-lucide="store"></i>
+          <span>Vendor Portal</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle">
+          <i data-lucide="truck"></i>
+          <span>Vehicle Reservation</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit">
+          <i data-lucide="clipboard-check"></i>
+          <span>Audit Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet">
+          <i data-lucide="car"></i>
+          <span>Fleet Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document">
+          <i data-lucide="file-text"></i>
+          <span>Document Tracking</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">SETTINGS</span>
+        
+        <a href="#" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Configuration</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="shield"></i>
+          <span>Security</span>
+        </a>
+        
+        <a href="../login.html" class="nav-item">
+            <i data-lucide="log-out"></i>
+            <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <img src="../img/profile.png" alt="User">
+        </div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <button class="user-menu-btn">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1 id="contractsHeader">Contract & Document Oversight
+            <small id="filterInfo" style="font-size:0.6em; margin-left:1rem;"></small>
+          </h1>
+          <p>Manage and oversee vendor contracts and documents</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Contract & Document Oversight</h3>
+              <p class="card-subtitle">Oversee vendor contracts and documentation</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="successAlert" class="alert alert-success">
+              <i data-lucide="check-circle"></i> Contract saved successfully!
+            </div>
+            <div id="errorAlert" class="alert alert-error">
+              <i data-lucide="alert-circle"></i> <span id="errorMessage">Please fill all required fields</span>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="file-signature"></i> Contract Management</h4>
+              <form id="contractForm" class="form-grid">
+                <div class="form-group">
+                  <label>Contract ID (Auto-Generated)</label>
+                  <input type="text" id="contractId" disabled placeholder="CTR-00001">
+                </div>
+
+                <div class="form-group">
+                  <label>Vendor ID <span style="color: #ef4444;">*</span></label>
+                  <select id="vendorId" required>
+                    <option value="">Select a vendor...</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Contract Type <span style="color: #ef4444;">*</span></label>
+                  <select id="contractType" required>
+                    <option value="">Select Type</option>
+                    <option value="Service">Service Agreement</option>
+                    <option value="Fuel">Fuel Supply</option>
+                    <option value="Lease">Vehicle Lease</option>
+                    <option value="Maintenance">Maintenance</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Start Date <span style="color: #ef4444;">*</span></label>
+                  <input type="date" id="startDate" required>
+                </div>
+
+                <div class="form-group">
+                  <label>End Date <span style="color: #ef4444;">*</span></label>
+                  <input type="date" id="endDate" required>
+                </div>
+
+                <div class="form-group">
+                  <label>Contract Amount <span style="color: #ef4444;">*</span></label>
+                  <input type="number" id="contractAmount" placeholder="Amount in currency" required>
+                </div>
+
+                <div class="form-group form-row">
+                  <label>Terms & Conditions <span style="color: #ef4444;">*</span></label>
+                  <textarea id="contractTerms" placeholder="Contract details and terms" required></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label>Approval Status <span style="color: #ef4444;">*</span></label>
+                  <select id="approvalStatus" required>
+                    <option value="">Select Status</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Pending">Pending Approval</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i> Save Contract
+                  </button>
+                  <button type="reset" class="btn btn-secondary">
+                    <i data-lucide="refresh-cw"></i> Clear Form
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="list"></i> Active Contracts</h4>
+              <table class="vendor-table">
+                <thead>
+                  <tr>
+                    <th>Contract ID</th>
+                    <th>Vendor ID</th>
+                    <th>Type</th>
+                    <th>Ends</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="contractTableBody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-secondary);">No contracts yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit Contract Modal -->
+  <div id="editContractModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Contract</h2>
+        <button class="modal-close" id="closeEditModal">&times;</button>
+      </div>
+      <form id="editContractForm" class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label>Contract ID (Read-only)</label>
+            <input type="text" id="editContractId" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Vendor ID (Read-only)</label>
+            <input type="text" id="editVendorId" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Contract Type <span style="color: #ef4444;">*</span></label>
+            <input type="text" id="editContractType" required>
+          </div>
+
+          <div class="form-group">
+            <label>Start Date <span style="color: #ef4444;">*</span></label>
+            <input type="date" id="editStartDate" required>
+          </div>
+
+          <div class="form-group">
+            <label>End Date <span style="color: #ef4444;">*</span></label>
+            <input type="date" id="editEndDate" required>
+          </div>
+
+          <div class="form-group">
+            <label>Contract Amount <span style="color: #ef4444;">*</span></label>
+            <input type="number" id="editContractAmount" step="0.01" required>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Terms & Conditions</label>
+            <textarea id="editTermsConditions"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Status <span style="color: #ef4444;">*</span></label>
+            <select id="editApprovalStatus" required>
+              <option value="Draft">Draft</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" id="cancelEditBtn">Cancel</button>
+        <button class="btn-modal-confirm" id="saveEditBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Contract Modal -->
+  <div id="deleteContractModal" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2>Delete Contract</h2>
+        <button class="modal-close" id="closeDeleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-primary); margin: 0;">
+          Are you sure you want to delete contract <strong id="deleteContractId">-</strong>?
+        </p>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 1rem 0 0 0;">
+          This action cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" id="cancelDeleteBtn">Cancel</button>
+        <button class="btn-modal-confirm" id="confirmDeleteBtn" style="background: #ef4444;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboard.js"></script>
+  <script>
+    lucide.createIcons();
+
+    class ContractManagement {
+      constructor() {
+        this.contracts = [];
+        this.vendors = [];
+        this.apiUrl = '../api/vendor-contracts.php';
+        this.vendorApiUrl = '../api/vendors.php';
+        // optional vendor filter from URL
+        const params = new URLSearchParams(window.location.search);
+        this.vendorFilter = params.get('vendor_id');
+        this.initializeForm();
+        this.loadData();
+      }
+
+      async loadData() {
+        try {
+          await this.loadVendors();
+          await this.loadContracts();
+        } catch (error) {
+          this.showError('Error loading data: ' + error.message);
+        }
+      }
+
+      async loadVendors() {
+        try {
+          const response = await fetch(this.vendorApiUrl);
+          const raw = await response.text();
+          let result;
+          try {
+            result = raw ? JSON.parse(raw) : null;
+          } catch (err) {
+            console.error('Non-JSON response loading vendors:', raw, err);
+            return;
+          }
+          if (result && result.success) {
+            this.vendors = result.data || [];
+            this.loadVendorOptions();
+          }
+        } catch (error) {
+          console.error('Error loading vendors:', error);
+        }
+      }
+
+      async loadContracts() {
+        try {
+          let url = this.apiUrl;
+          if (this.vendorFilter) {
+            url += '?vendor_id=' + encodeURIComponent(this.vendorFilter);
+          }
+          const response = await fetch(url);
+          const raw = await response.text();
+          let result;
+          try {
+            result = raw ? JSON.parse(raw) : null;
+          } catch (err) {
+            this.showError('Server response not JSON when loading contracts');
+            console.error('Non-JSON response loading contracts:', raw, err);
+            this.displayContracts();
+            return;
+          }
+          if (result && result.success) {
+            this.contracts = result.data || [];
+          }
+          this.displayContracts();
+        } catch (error) {
+          this.showError('Error loading contracts: ' + error.message);
+        }
+      }
+
+      loadVendorOptions() {
+        const select = document.getElementById('vendorId');
+        select.innerHTML = '<option value="">Select a vendor...</option>';
+        
+        this.vendors.forEach(vendor => {
+          const option = document.createElement('option');
+          option.value = vendor.vendor_id;
+          option.textContent = `${vendor.vendor_id} - ${vendor.vendor_name}`;
+          select.appendChild(option);
+        });
+        // if page was opened with a vendor filter, preselect that vendor in the form
+        if (this.vendorFilter) {
+          select.value = this.vendorFilter;
+        }
+      }
+
+      initializeForm() {
+        const contractIdInput = document.getElementById('contractId');
+        contractIdInput.placeholder = 'Auto-generated by system';
+        contractIdInput.disabled = true;
+        document.getElementById('contractForm').addEventListener('submit', (e) => this.handleSubmit(e));
+      }
+
+      validateForm(formData) {
+        const required = ['vendor_id', 'contract_type', 'start_date', 'end_date', 'contract_amount', 'contract_terms', 'approval_status'];
+        for (let field of required) {
+          if (!formData[field] || formData[field].toString().trim() === '') {
+            this.showError(`${field.replace(/_/g, ' ')} is required`);
+            return false;
+          }
+        }
+
+        if (new Date(formData.end_date) < new Date(formData.start_date)) {
+          this.showError('End date must be after start date');
+          return false;
+        }
+
+        return true;
+      }
+
+      showSuccess(message = 'Contract saved successfully') {
+        const alert = document.getElementById('successAlert');
+        const messageEl = alert.querySelector('span') || document.createElement('span');
+        messageEl.textContent = message;
+        if (!alert.querySelector('span')) alert.appendChild(messageEl);
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 4000);
+      }
+
+      showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 4000);
+      }
+
+      async handleSubmit(e) {
+        e.preventDefault();
+
+        const formData = {
+          vendor_id: document.getElementById('vendorId').value,
+          contract_type: document.getElementById('contractType').value,
+          start_date: document.getElementById('startDate').value,
+          end_date: document.getElementById('endDate').value,
+          contract_amount: document.getElementById('contractAmount').value,
+          contract_terms: document.getElementById('contractTerms').value,
+          approval_status: document.getElementById('approvalStatus').value
+        };
+
+        if (!this.validateForm(formData)) {
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const raw = await response.text();
+          let result;
+          try {
+            result = raw ? JSON.parse(raw) : null;
+          } catch (err) {
+            this.showError('Server response not JSON: ' + (raw || err.message));
+            console.error('Non-JSON response saving contract:', raw, err);
+            return;
+          }
+
+          if (result && result.success) {
+            this.showSuccess('Contract saved with ID: ' + result.data.contract_id);
+            document.getElementById('contractForm').reset();
+            this.loadContracts();
+          } else {
+            this.showError('Failed to save contract: ' + (result ? result.message : 'Unknown server error'));
+          }
+        } catch (error) {
+          this.showError('Error saving contract: ' + error.message);
+        }
+      }
+
+      displayContracts() {
+        // update header and filter info if filtering by vendor
+        const header = document.getElementById('contractsHeader');
+        const filterInfo = document.getElementById('filterInfo');
+        if (this.vendorFilter) {
+          if (header) {
+            header.textContent = `Contracts for ${this.vendorFilter}`;
+          }
+          if (filterInfo) {
+            filterInfo.innerHTML = `<a href="vendor-contracts.html" style="font-size:0.8em;">(view all)</a>`;
+          }
+        } else {
+          if (filterInfo) {
+            filterInfo.textContent = '';
+          }
+        }
+        const tbody = document.getElementById('contractTableBody');
+        if (this.contracts.length === 0) {
+          const msg = this.vendorFilter ? 'No contracts found for this vendor' : 'No contracts yet';
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">${msg}</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = this.contracts.map(contract => `
+          <tr>
+            <td><strong>${contract.contract_id}</strong></td>
+            <td>${contract.vendor_id}</td>
+            <td>${contract.contract_type || '-'}</td>
+            <td>${contract.end_date || '-'}</td>
+            <td>$${parseFloat(contract.contract_amount || 0).toLocaleString()}</td>
+            <td>
+              <span class="status-badge status-${contract.approval_status.toLowerCase().replace(/ /g, '-')}">
+                ${contract.approval_status}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-secondary" data-contract-id="${contract.contract_id}" onclick="vendorContracts.viewDocuments(event)">
+                  <i data-lucide="eye" class="lucide-icon"></i> Docs
+                </button>
+                <button class="btn-action btn-info" data-contract-id="${contract.contract_id}" onclick="vendorContracts.uploadContract(event)">
+                  <i data-lucide="upload" class="lucide-icon"></i> Upload
+                </button>
+                <button class="btn-action btn-success" data-contract-id="${contract.contract_id}" onclick="vendorContracts.approveContract(event)">
+                  <i data-lucide="check-circle" class="lucide-icon"></i> Approve
+                </button>
+                <button class="btn-action btn-primary" data-contract-id="${contract.contract_id}" onclick="vendorContracts.renewContract(event)">
+                  <i data-lucide="refresh-cw" class="lucide-icon"></i> Renew
+                </button>
+                <button class="btn-action btn-warning" data-contract-id="${contract.contract_id}" onclick="vendorContracts.terminateContract(event)">
+                  <i data-lucide="x-circle" class="lucide-icon"></i> Terminate
+                </button>
+                <button class="btn-action btn-edit" data-contract-id="${contract.contract_id}" onclick="vendorContracts.editContract(event)">
+                  <i data-lucide="edit-2" class="lucide-icon"></i> Edit
+                </button>
+                <button class="btn-action btn-delete" data-contract-id="${contract.contract_id}" onclick="vendorContracts.deleteContract(event)">
+                  <i data-lucide="trash-2" class="lucide-icon"></i> Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      // Edit contract
+      editContract(event) {
+        event.preventDefault();
+        const contractId = event.currentTarget.getAttribute('data-contract-id');
+        const contract = this.contracts.find(c => c.contract_id === contractId);
+        
+        if (!contract) {
+          this.showError('Contract not found');
+          return;
+        }
+
+        document.getElementById('editContractId').value = contract.contract_id;
+        document.getElementById('editVendorId').value = contract.vendor_id;
+        document.getElementById('editContractType').value = contract.contract_type;
+        document.getElementById('editStartDate').value = contract.start_date;
+        document.getElementById('editEndDate').value = contract.end_date;
+        document.getElementById('editContractAmount').value = contract.contract_amount;
+        document.getElementById('editTermsConditions').value = contract.terms_conditions;
+        document.getElementById('editApprovalStatus').value = contract.approval_status;
+
+        this.currentEditContractId = contractId;
+        document.getElementById('editContractModal').classList.add('show');
+      }
+
+      // Save edited contract
+      async saveEditContract() {
+        const formData = {
+          contract_id: document.getElementById('editContractId').value,
+          vendor_id: document.getElementById('editVendorId').value,
+          contract_type: document.getElementById('editContractType').value,
+          start_date: document.getElementById('editStartDate').value,
+          end_date: document.getElementById('editEndDate').value,
+          contract_amount: document.getElementById('editContractAmount').value,
+          terms_conditions: document.getElementById('editTermsConditions').value,
+          approval_status: document.getElementById('editApprovalStatus').value
+        };
+
+        if (!this.validateForm(formData)) {
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const raw = await response.text();
+          let result;
+          try {
+            result = raw ? JSON.parse(raw) : null;
+          } catch (parseErr) {
+            this.showError('Server response not JSON: ' + (raw || parseErr.message));
+            return;
+          }
+
+          if (result && result.success) {
+            this.showSuccess('Contract updated successfully');
+            document.getElementById('editContractModal').classList.remove('show');
+            this.loadContracts();
+          } else {
+            this.showError('Failed to update contract: ' + (result ? result.message : 'Unknown error'));
+          }
+        } catch (error) {
+          this.showError('Error updating contract: ' + error.message);
+        }
+      }
+
+      // Delete contract
+      deleteContract(event) {
+        event.preventDefault();
+        const contractId = event.currentTarget.getAttribute('data-contract-id');
+        const contract = this.contracts.find(c => c.contract_id === contractId);
+        
+        if (!contract) {
+          this.showError('Contract not found');
+          return;
+        }
+
+        document.getElementById('deleteContractId').textContent = contractId;
+        this.currentDeleteContractId = contractId;
+        document.getElementById('deleteContractModal').classList.add('show');
+      }
+
+      // Confirm delete contract
+      async confirmDeleteContract() {
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contract_id: this.currentDeleteContractId })
+          });
+
+          const raw = await response.text();
+          let result;
+          try {
+            result = raw ? JSON.parse(raw) : null;
+          } catch (parseErr) {
+            this.showError('Server response not JSON: ' + (raw || parseErr.message));
+            return;
+          }
+
+          if (result && result.success) {
+            this.showSuccess('Contract deleted successfully');
+            document.getElementById('deleteContractModal').classList.remove('show');
+            this.loadContracts();
+          } else {
+            this.showError('Failed to delete contract: ' + (result ? result.message : 'Unknown error'));
+          }
+        } catch (error) {
+          this.showError('Error deleting contract: ' + error.message);
+        }
+      }
+
+      // View documents for a contract
+      async viewDocuments(event) {
+        event.preventDefault();
+        const contractId = event.currentTarget.getAttribute('data-contract-id');
+        try {
+          const response = await fetch(`../api/contract-documents.php?contract_id=${encodeURIComponent(contractId)}`);
+          const result = await response.json();
+          if (result && result.success) {
+            const docs = result.data || [];
+            if (docs.length === 0) {
+              alert('No documents uploaded for ' + contractId);
+              return;
+            }
+            let msg = 'Documents for ' + contractId + ':\n';
+            docs.forEach(d => {
+              msg += `- ${d.filename}${d.description ? ' (' + d.description + ')' : ''}\n`;
+            });
+            alert(msg);
+          } else {
+            this.showError('Failed to retrieve documents');
+          }
+        } catch (err) {
+          this.showError('Error fetching documents: ' + err.message);
+        }
+      }
+
+      // Approve contract
+      async approveContract(event) {
+        event.preventDefault();
+        const contractId = event.currentTarget.getAttribute('data-contract-id');
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contract_id: contractId, approval_status: 'Approved' })
+          });
+          const result = await response.json();
+          if (result && result.success) {
+            this.showSuccess('Contract approved');
+            this.loadContracts();
+          } else {
+            this.showError('Failed to approve contract');
+          }
+        } catch (error) {
+          this.showError('Error approving contract: ' + error.message);
+        }
+      }
+
+      // Renew contract (placeholder)
+      renewContract(event) {
+        event.preventDefault();
+        const contractId = event.currentTarget.getAttribute('data-contract-id');
+        alert('Renew contract ID: ' + contractId + '\n(Functionality to extend/replace contract TBD)');
+      }
+
+      // Terminate contract
+      async terminateContract(event) {
+        event.preventDefault();
+        const contractId = event.currentTarget.getAttribute('data-contract-id');
+        if (!confirm('Are you sure you want to terminate contract ' + contractId + '?')) {
+          return;
+        }
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contract_id: contractId, approval_status: 'Cancelled' })
+          });
+          const result = await response.json();
+          if (result && result.success) {
+            this.showSuccess('Contract terminated');
+            this.loadContracts();
+          } else {
+            this.showError('Failed to terminate contract');
+          }
+        } catch (error) {
+          this.showError('Error terminating contract: ' + error.message);
+        }
+      }
+
+      // Setup modal listeners
+      setupModalListeners() {
+        document.getElementById('closeEditModal').addEventListener('click', () => {
+          document.getElementById('editContractModal').classList.remove('show');
+        });
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+          document.getElementById('editContractModal').classList.remove('show');
+        });
+        document.getElementById('saveEditBtn').addEventListener('click', () => {
+          this.saveEditContract();
+        });
+
+        document.getElementById('closeDeleteModal').addEventListener('click', () => {
+          document.getElementById('deleteContractModal').classList.remove('show');
+        });
+        document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+          document.getElementById('deleteContractModal').classList.remove('show');
+        });
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+          this.confirmDeleteContract();
+        });
+
+        window.addEventListener('click', (e) => {
+          const editModal = document.getElementById('editContractModal');
+          const deleteModal = document.getElementById('deleteContractModal');
+          if (e.target === editModal) editModal.classList.remove('show');
+          if (e.target === deleteModal) deleteModal.classList.remove('show');
+        });
+      }
+    }
+
+    // Initialize on page load
+    let vendorContracts;
+    document.addEventListener('DOMContentLoaded', () => {
+      vendorContracts = new ContractManagement();
+      vendorContracts.setupModalListeners();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <style>
+    /* Basic Submenu CSS to ensure it hides/shows properly if not already in your CSS */
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Table Styles */
+    .vendor-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .vendor-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .vendor-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .vendor-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .vendor-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-inactive {
+      background: rgba(155, 155, 155, 0.15);
+      color: #999;
+    }
+
+    .status-pending {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-accredited {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-suspended {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .status-expired {
+      background: rgba(155, 155, 155, 0.15);
+      color: #999;
+    }
+
+    .status-approved {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-rejected {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .status-draft {
+      background: rgba(155, 155, 155, 0.15);
+      color: #999;
+    }
+
+    .status-good {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-average {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-poor {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-edit {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-edit:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Module Section Styles */
+    .module-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .module-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .module-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--brand-green);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .action-btn i {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard.html" class="nav-item active">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor">
+          <i data-lucide="store"></i>
+          <span>Vendor Portal</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle">
+          <i data-lucide="truck"></i>
+          <span>Vehicle Reservation</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit">
+          <i data-lucide="clipboard-check"></i>
+          <span>Audit Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet">
+          <i data-lucide="car"></i>
+          <span>Fleet Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document">
+          <i data-lucide="file-text"></i>
+          <span>Document Tracking</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">SETTINGS</span>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Configuration</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="shield"></i>
+          <span>Security</span>
+        </a>
+
+        <a href="../login.html" class="nav-item">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <img src="../img/profile.png" alt="User">
+        </div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <button class="user-menu-btn">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1>Dashboard Overview</h1>
+          <p>Welcome back, John! Here's what's happening today.</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(44, 160, 120, 0.1); color: var(--brand-green);">
+            <i data-lucide="store"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Active Vendors</span>
+            <h3 class="stat-value" id="activeVendorsCount">0</h3>
+            <div class="stat-trend positive">
+              <i data-lucide="trending-up"></i>
+              <span id="vendorsTrend">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(255, 193, 7, 0.1); color: var(--brand-yellow);">
+            <i data-lucide="file-check"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Pending Accreditation</span>
+            <h3 class="stat-value" id="pendingAccreditationCount">0</h3>
+            <div class="stat-trend negative">
+              <i data-lucide="clock"></i>
+              <span id="accreditationStatus">Requires review</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <i data-lucide="alert-circle"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Expiring Contracts</span>
+            <h3 class="stat-value" id="expiringContractsCount">0</h3>
+            <div class="stat-trend negative">
+              <i data-lucide="trending-down"></i>
+              <span id="contractsStatus">Within 30 days</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+            <i data-lucide="activity"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Avg Vendor Rating</span>
+            <h3 class="stat-value" id="avgRatingCount">0/5</h3>
+            <div class="stat-trend positive">
+              <i data-lucide="trending-up"></i>
+              <span id="ratingStatus">Based on recent KPIs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Module Quick Actions</h3>
+              <p class="card-subtitle">Access all administration modules</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="quick-actions">
+              <!-- Vendor Portal Module -->
+              <div class="module-section">
+                <h4><i data-lucide="store"></i> Vendor Portal</h4>
+                <div class="module-actions">
+                  <a href="vendor-registration.html" class="action-btn">
+                    <i data-lucide="user-plus"></i>
+                    <span>Vendor Registration</span>
+                  </a>
+                  <a href="vendor-profile.html" class="action-btn">
+                    <i data-lucide="users"></i>
+                    <span>Vendor Profiles</span>
+                  </a>
+                  <a href="vendor-accreditation.html" class="action-btn">
+                    <i data-lucide="shield-check"></i>
+                    <span>Accreditation</span>
+                  </a>
+                  <a href="vendor-contracts.html" class="action-btn">
+                    <i data-lucide="file-signature"></i>
+                    <span>Contracts</span>
+                  </a>
+                  <a href="vendor-performance.html" class="action-btn">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Performance</span>
+                  </a>
+                  <a href="vendor-reports.html" class="action-btn">
+                    <i data-lucide="chart-line"></i>
+                    <span>Reports</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Vehicle Reservation Module -->
+              <div class="module-section">
+                <h4><i data-lucide="truck"></i> Vehicle Reservation</h4>
+                <div class="module-actions">
+                  <a href="vehicle-inventory.html" class="action-btn">
+                    <i data-lucide="car"></i>
+                    <span>Vehicle Inventory</span>
+                  </a>
+                  <a href="reservation-request.html" class="action-btn">
+                    <i data-lucide="clipboard-check"></i>
+                    <span>Reservation Requests</span>
+                  </a>
+                  <a href="driver-vehicle-assignment.html" class="action-btn">
+                    <i data-lucide="user-check"></i>
+                    <span>Driver Assignment</span>
+                  </a>
+                  <a href="reservation-schedule.html" class="action-btn">
+                    <i data-lucide="calendar"></i>
+                    <span>Schedule Management</span>
+                  </a>
+                  <a href="trip-log.html" class="action-btn">
+                    <i data-lucide="route"></i>
+                    <span>Trip Logs</span>
+                  </a>
+                  <a href="reservation-reporting.html" class="action-btn">
+                    <i data-lucide="file-text"></i>
+                    <span>Usage Reports</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Audit Management Module -->
+              <div class="module-section">
+                <h4><i data-lucide="clipboard-check"></i> Audit Management</h4>
+                <div class="module-actions">
+                  <a href="audit-schedule.html" class="action-btn">
+                    <i data-lucide="calendar"></i>
+                    <span>Audit Schedule</span>
+                  </a>
+                  <a href="audit-checklist.html" class="action-btn">
+                    <i data-lucide="list-checks"></i>
+                    <span>Checklists</span>
+                  </a>
+                  <a href="audit-progress.html" class="action-btn">
+                    <i data-lucide="trending-up"></i>
+                    <span>Progress Monitoring</span>
+                  </a>
+                  <a href="audit-findings.html" class="action-btn">
+                    <i data-lucide="search"></i>
+                    <span>Findings Review</span>
+                  </a>
+                  <a href="corrective-action.html" class="action-btn">
+                    <i data-lucide="wrench"></i>
+                    <span>Corrective Actions</span>
+                  </a>
+                  <a href="audit-reporting.html" class="action-btn">
+                    <i data-lucide="file-text"></i>
+                    <span>Audit Reports</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Fleet Management Module -->
+              <div class="module-section">
+                <h4><i data-lucide="car"></i> Fleet Management</h4>
+                <div class="module-actions">
+                  <a href="vehicle-registration.html" class="action-btn">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Vehicle Registration</span>
+                  </a>
+                  <a href="maintenance-schedule.html" class="action-btn">
+                    <i data-lucide="wrench"></i>
+                    <span>Maintenance</span>
+                  </a>
+                  <a href="fuel-usage.html" class="action-btn">
+                    <i data-lucide="fuel"></i>
+                    <span>Fuel Monitoring</span>
+                  </a>
+                  <a href="service-repair.html" class="action-btn">
+                    <i data-lucide="tool"></i>
+                    <span>Service History</span>
+                  </a>
+                  <a href="insurance-renewal.html" class="action-btn">
+                    <i data-lucide="shield"></i>
+                    <span>Insurance</span>
+                  </a>
+                  <a href="fleet-reporting.html" class="action-btn">
+                    <i data-lucide="chart-bar"></i>
+                    <span>Fleet Reports</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Document Tracking Module -->
+              <div class="module-section">
+                <h4><i data-lucide="file-text"></i> Document Tracking</h4>
+                <div class="module-actions">
+                  <a href="document-intake.html" class="action-btn">
+                    <i data-lucide="download"></i>
+                    <span>Document Intake</span>
+                  </a>
+                  <a href="document-workflow.html" class="action-btn">
+                    <i data-lucide="git-branch"></i>
+                    <span>Workflow Admin</span>
+                  </a>
+                  <a href="document-access.html" class="action-btn">
+                    <i data-lucide="lock"></i>
+                    <span>Access Control</span>
+                  </a>
+                  <a href="document-tracking.html" class="action-btn">
+                    <i data-lucide="eye"></i>
+                    <span>Document Tracking</span>
+                  </a>
+                  <a href="document-archive.html" class="action-btn">
+                    <i data-lucide="archive"></i>
+                    <span>Document Archive</span>
+                  </a>
+                  <a href="document-activity.html" class="action-btn">
+                    <i data-lucide="activity"></i>
+                    <span>Activity Reports</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Recent Vendors</h3>
+              <p class="card-subtitle">Latest registered vendors and their status</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="vendor-table">
+              <thead>
+                <tr>
+                  <th>Vendor ID</th>
+                  <th>Vendor Name</th>
+                  <th>Category</th>
+                  <th>Registration Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recentVendorsBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-secondary);">Loading vendors...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Pending Accreditations</h3>
+              <p class="card-subtitle">Vendors awaiting accreditation review</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="vendor-table">
+              <thead>
+                <tr>
+                  <th>Accreditation ID</th>
+                  <th>Vendor ID</th>
+                  <th>License Expires</th>
+                  <th>Risk Score</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pendingAccreditationsBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-secondary);">Loading accreditations...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Active Contracts</h3>
+              <p class="card-subtitle">Current contracts and their status</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="vendor-table">
+              <thead>
+                <tr>
+                  <th>Contract ID</th>
+                  <th>Vendor ID</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>End Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="activeContractsBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; color: var(--text-secondary);">Loading contracts...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Performance Overview</h3>
+              <p class="card-subtitle">Vendor performance metrics and ratings</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="vendor-table">
+              <thead>
+                <tr>
+                  <th>Vendor ID</th>
+                  <th>On-Time Rate</th>
+                  <th>Quality Score</th>
+                  <th>Incidents</th>
+                  <th>Avg Cost</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="performanceBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; color: var(--text-secondary);">Loading performance data...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/login_rbac.js"></script>
+  <script src="../js/admin_session.js"></script>
+  <script>
+    lucide.createIcons();
+
+    class Dashboard {
+      constructor() {
+        this.vendorData = [];
+        this.accreditationData = [];
+        this.contractData = [];
+        this.performanceData = [];
+        this.profileData = [];
+        this.reportData = [];
+
+        this.vendorApi = '../api/vendors.php';
+        this.accreditationApi = '../api/vendor-accreditation.php';
+        this.contractApi = '../api/vendor-contracts.php';
+        this.performanceApi = '../api/vendor-performance.php';
+        this.profileApi = '../api/vendor-profile.php';
+        this.reportApi = '../api/vendor-reports.php';
+
+        this.loadDashboardData();
+      }
+
+      async loadDashboardData() {
+        try {
+          await Promise.all([
+            this.loadVendors(),
+            this.loadAccreditations(),
+            this.loadContracts(),
+            this.loadPerformance(),
+            this.loadProfiles()
+          ]);
+          this.updateStats();
+          this.displayRecentVendors();
+          this.displayPendingAccreditations();
+          this.displayActiveContracts();
+          this.displayPerformance();
+        } catch (error) {
+          console.error('Error loading dashboard data:', error);
+        }
+      }
+
+      async loadVendors() {
+        try {
+          const response = await fetch(this.vendorApi);
+          const raw = await response.text();
+          const result = raw ? JSON.parse(raw) : null;
+          if (result && result.success) {
+            this.vendorData = result.data || [];
+          }
+        } catch (error) {
+          console.error('Error loading vendors:', error);
+        }
+      }
+
+      async loadAccreditations() {
+        try {
+          const response = await fetch(this.accreditationApi);
+          const raw = await response.text();
+          const result = raw ? JSON.parse(raw) : null;
+          if (result && result.success) {
+            this.accreditationData = result.data || [];
+          }
+        } catch (error) {
+          console.error('Error loading accreditations:', error);
+        }
+      }
+
+      async loadContracts() {
+        try {
+          const response = await fetch(this.contractApi);
+          const raw = await response.text();
+          const result = raw ? JSON.parse(raw) : null;
+          if (result && result.success) {
+            this.contractData = result.data || [];
+          }
+        } catch (error) {
+          console.error('Error loading contracts:', error);
+        }
+      }
+
+      async loadPerformance() {
+        try {
+          const response = await fetch(this.performanceApi);
+          const raw = await response.text();
+          const result = raw ? JSON.parse(raw) : null;
+          if (result && result.success) {
+            this.performanceData = result.data || [];
+          }
+        } catch (error) {
+          console.error('Error loading performance data:', error);
+        }
+      }
+
+      async loadProfiles() {
+        try {
+          const response = await fetch(this.profileApi);
+          const raw = await response.text();
+          const result = raw ? JSON.parse(raw) : null;
+          if (result && result.success) {
+            this.profileData = result.data || [];
+          }
+        } catch (error) {
+          console.error('Error loading profiles:', error);
+        }
+      }
+
+      updateStats() {
+        // Active vendors count
+        document.getElementById('activeVendorsCount').textContent = this.vendorData.length;
+        document.getElementById('vendorsTrend').textContent = `${this.vendorData.length} total vendors`;
+
+        // Pending accreditations count
+        const pendingAccred = this.accreditationData.filter(a => a.status === 'Pending').length;
+        document.getElementById('pendingAccreditationCount').textContent = pendingAccred;
+
+        // Expiring contracts (within 30 days)
+        const today = new Date();
+        const thirtyDaysLater = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const expiringContracts = this.contractData.filter(c => {
+          const endDate = new Date(c.end_date);
+          return endDate >= today && endDate <= thirtyDaysLater;
+        }).length;
+        document.getElementById('expiringContractsCount').textContent = expiringContracts;
+
+        // Average rating from performance data
+        if (this.performanceData.length > 0) {
+          const avgQuality = (this.performanceData.reduce((sum, p) => sum + parseFloat(p.quality_score || 0), 0) / this.performanceData.length).toFixed(1);
+          document.getElementById('avgRatingCount').textContent = avgQuality + '/5';
+        }
+      }
+
+      displayRecentVendors() {
+        const tbody = document.getElementById('recentVendorsBody');
+        if (this.vendorData.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No vendors found</td></tr>';
+          return;
+        }
+
+        const recent = this.vendorData.slice(0, 5);
+        tbody.innerHTML = recent.map(vendor => `
+          <tr>
+            <td><strong>${vendor.vendor_id}</strong></td>
+            <td>${vendor.vendor_name}</td>
+            <td>${vendor.vendor_category || '-'}</td>
+            <td>${vendor.registration_date ? new Date(vendor.registration_date).toLocaleDateString() : '-'}</td>
+            <td>
+              <span class="status-badge status-${(vendor.status || 'active').toLowerCase()}">
+                ${vendor.status || 'Active'}
+              </span>
+            </td>
+            <td>
+              <a href="vendor-registration.html" class="btn-action btn-edit" style="text-decoration: none;">
+                <i data-lucide="edit-2" class="lucide-icon"></i> View
+              </a>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      displayPendingAccreditations() {
+        const tbody = document.getElementById('pendingAccreditationsBody');
+        const pending = this.accreditationData.filter(a => a.status === 'Pending');
+
+        if (pending.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No pending accreditations</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = pending.slice(0, 5).map(acc => `
+          <tr>
+            <td><strong>${acc.accreditation_id}</strong></td>
+            <td>${acc.vendor_id}</td>
+            <td>${acc.license_expiry || '-'}</td>
+            <td>${acc.risk_score || '0'}</td>
+            <td>
+              <span class="status-badge status-${acc.status.toLowerCase().replace(/ /g, '-')}">
+                ${acc.status}
+              </span>
+            </td>
+            <td>
+              <a href="vendor-accreditation.html" class="btn-action btn-edit" style="text-decoration: none;">
+                <i data-lucide="edit-2" class="lucide-icon"></i> Review
+              </a>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      displayActiveContracts() {
+        const tbody = document.getElementById('activeContractsBody');
+        if (this.contractData.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">No contracts found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.contractData.slice(0, 5).map(contract => `
+          <tr>
+            <td><strong>${contract.contract_id}</strong></td>
+            <td>${contract.vendor_id}</td>
+            <td>${contract.contract_type || '-'}</td>
+            <td>${contract.contract_amount ? '$' + parseFloat(contract.contract_amount).toLocaleString('en-US', { maximumFractionDigits: 0 }) : '-'}</td>
+            <td>${contract.end_date ? new Date(contract.end_date).toLocaleDateString() : '-'}</td>
+            <td>
+              <span class="status-badge status-${contract.approval_status.toLowerCase().replace(/ /g, '-')}">
+                ${contract.approval_status}
+              </span>
+            </td>
+            <td>
+              <a href="vendor-contracts.html" class="btn-action btn-edit" style="text-decoration: none;">
+                <i data-lucide="edit-2" class="lucide-icon"></i> Edit
+              </a>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      displayPerformance() {
+        const tbody = document.getElementById('performanceBody');
+        if (this.performanceData.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">No performance data found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.performanceData.slice(0, 5).map(perf => {
+          const status = this.getPerformanceStatus(perf);
+          return `
+            <tr>
+              <td><strong>${perf.vendor_id}</strong></td>
+              <td>${perf.on_time_rate || '0'}%</td>
+              <td>${perf.quality_score || '0'}/5</td>
+              <td>${perf.incident_reports || '0'}</td>
+              <td>$${parseFloat(perf.average_cost || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+              <td>
+                <span class="status-badge status-${status.toLowerCase()}">
+                  ${status}
+                </span>
+              </td>
+              <td>
+                <a href="vendor-performance.html" class="btn-action btn-edit" style="text-decoration: none;">
+                  <i data-lucide="edit-2" class="lucide-icon"></i> Review
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        lucide.createIcons();
+      }
+
+      getPerformanceStatus(perf) {
+        const quality = parseFloat(perf.quality_score || 0);
+        if (quality >= 4.5) return 'Good';
+        if (quality >= 3) return 'Average';
+        return 'Poor';
+      }
+    }
+
+    // Initialize dashboard on page load
+    let dashboard;
+    document.addEventListener('DOMContentLoaded', () => {
+      dashboard = new Dashboard();
+    });
+  </script>
+</body>
+
+</html>

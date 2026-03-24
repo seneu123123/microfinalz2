@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trip Log Monitoring</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <style>
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor">
+          <i data-lucide="store"></i>
+          <span>Vendor Portal</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle">
+          <i data-lucide="truck"></i>
+          <span>Vehicle Reservation</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit">
+          <i data-lucide="clipboard-check"></i>
+          <span>Audit Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet">
+          <i data-lucide="car"></i>
+          <span>Fleet Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document">
+          <i data-lucide="file-text"></i>
+          <span>Document Tracking</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">SETTINGS</span>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Configuration</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="shield"></i>
+          <span>Security</span>
+        </a>
+
+        <a href="../login.html" class="nav-item">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <img src="../img/profile.png" alt="User">
+        </div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <button class="user-menu-btn">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1>Trip Log Monitoring</h1>
+          <p>Track trip fuel, distance and incidents</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">2.5 Trip Log Monitoring</h3>
+              <p class="card-subtitle">Log trip start/end, fuel, distance and incidents</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="successAlert" class="alert alert-success">
+              <i data-lucide="check-circle"></i> Trip logged successfully!
+            </div>
+            <div id="errorAlert" class="alert alert-error">
+              <i data-lucide="alert-circle"></i> <span id="errorMessage">Please fill all required fields</span>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="plus-circle"></i> Start New Trip</h4>
+              <form id="tripForm" class="form-grid">
+                <div class="form-group">
+                  <label>Reservation ID <span style="color: #ef4444;">*</span></label>
+                  <select id="reservationIdInput" required>
+                    <option value="">Select Reservation</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Vehicle ID <span style="color: #ef4444;">*</span></label>
+                  <select id="vehicleIdInput" required>
+                    <option value="">Select Vehicle</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Driver ID <span style="color: #ef4444;">*</span></label>
+                  <select id="driverIdInput" required>
+                    <option value="">Select Driver</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Start Time <span style="color: #ef4444;">*</span></label>
+                  <input type="datetime-local" id="startTimeInput" required>
+                </div>
+
+                <div class="form-group">
+                  <label>End Time</label>
+                  <input type="datetime-local" id="endTimeInput">
+                </div>
+
+                <div class="form-group">
+                  <label>Fuel Used (Liters)</label>
+                  <input type="number" id="fuelUsedInput" step="0.01" min="0" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                  <label>Distance (KM)</label>
+                  <input type="number" id="distanceInput" step="0.01" min="0" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                  <label>Trip Status</label>
+                  <select id="statusInput">
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Incident Report</label>
+                  <textarea id="incidentInput" rows="2" placeholder="Describe any incidents..."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label>Vendor Service Used</label>
+                  <input type="text" id="vendorServiceInput" placeholder="Fuel station, maintenance, etc.">
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                  <label>Audit Reference</label>
+                  <input type="text" id="auditRefInput" placeholder="AUD-001">
+                </div>
+
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i> Log Trip
+                  </button>
+                  <button type="reset" class="btn btn-secondary">
+                    <i data-lucide="refresh-cw"></i> Clear Form
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Edit Trip Modal -->
+            <div id="editTripModal" class="modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2>Edit Trip Information</h2>
+                  <button class="modal-close" id="closeEditModal">&times;</button>
+                </div>
+                <form id="editTripForm" class="modal-body">
+                  <input type="hidden" id="editTripId">
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div class="form-group">
+                      <label>Reservation ID <span style="color: #ef4444;">*</span></label>
+                      <select id="editReservationId" required>
+                        <option value="">Select Reservation</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Vehicle ID <span style="color: #ef4444;">*</span></label>
+                      <select id="editVehicleId" required>
+                        <option value="">Select Vehicle</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Driver ID <span style="color: #ef4444;">*</span></label>
+                      <select id="editDriverId" required>
+                        <option value="">Select Driver</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Start Time <span style="color: #ef4444;">*</span></label>
+                      <input type="datetime-local" id="editStartTime" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>End Time</label>
+                      <input type="datetime-local" id="editEndTime">
+                    </div>
+
+                    <div class="form-group">
+                      <label>Fuel Used (Liters)</label>
+                      <input type="number" id="editFuelUsed" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                      <label>Distance (KM)</label>
+                      <input type="number" id="editDistance" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                      <label>Trip Status</label>
+                      <select id="editStatus">
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Incident Report</label>
+                    <textarea id="editIncident" rows="2" placeholder="Describe any incidents..."></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Vendor Service Used</label>
+                    <input type="text" id="editVendorService" placeholder="Fuel station, maintenance, etc.">
+                  </div>
+
+                  <div class="form-group">
+                    <label>Audit Reference</label>
+                    <input type="text" id="editAuditRef" placeholder="AUD-001">
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+                      <i data-lucide="x"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      <i data-lucide="save"></i> Update Trip
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="list"></i> Trip Logs</h4>
+              <table class="vendor-table" id="tripTable">
+                <thead>
+                  <tr>
+                    <th>Trip ID</th>
+                    <th>Reservation</th>
+                    <th>Vehicle</th>
+                    <th>Driver</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Fuel (L)</th>
+                    <th>Distance (KM)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tripTableBody">
+                  <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-secondary);">No trips found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/dashboard.js"></script>
+  <style>
+    /* Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    .vendor-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .vendor-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .vendor-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .vendor-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .vendor-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-in-progress {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-completed {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-cancelled {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Alert Styles */
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .alert.show {
+      display: flex;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-edit {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-edit:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+  </style>
+  <script>
+    lucide.createIcons();
+
+    class TripLogManager {
+      constructor() {
+        this.trips = [];
+        this.reservations = [];
+        this.vehicles = [];
+        this.drivers = [];
+        this.apiUrl = '../api/trip_logs.php';
+        this.reservationUrl = '../api/reservations.php';
+        this.vehicleUrl = '../api/vehicles.php';
+        this.driverUrl = '../api/drivers.php';
+        this.initializeForm();
+        this.setupModalListeners();
+        this.loadAllData();
+      }
+
+      async loadAllData() {
+        await Promise.all([
+          this.loadTrips(),
+          this.loadReservations(),
+          this.loadVehicles(),
+          this.loadDrivers()
+        ]);
+      }
+
+      async loadTrips() {
+        try {
+          const response = await fetch(this.apiUrl);
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Invalid JSON from trips API:', text);
+            throw parseErr;
+          }
+          if (result.success) {
+            this.trips = result.data || [];
+          } else {
+            this.showError('Failed to load trips: ' + result.message);
+          }
+          this.displayTrips();
+        } catch (error) {
+          this.showError('Error loading trips: ' + error.message);
+        }
+      }
+
+      async loadReservations() {
+        try {
+          const response = await fetch(this.reservationUrl);
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Invalid JSON from reservations API:', text);
+            throw parseErr;
+          }
+          if (result.success) {
+            this.reservations = result.data || [];
+            this.populateReservationSelects();
+          }
+        } catch (error) {
+          console.warn('Error loading reservations:', error);
+        }
+      }
+
+      async loadVehicles() {
+        try {
+          const response = await fetch(this.vehicleUrl);
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Invalid JSON from vehicles API:', text);
+            throw parseErr;
+          }
+          if (result.success) {
+            this.vehicles = result.data || [];
+            this.populateVehicleSelects();
+          }
+        } catch (error) {
+          console.warn('Error loading vehicles:', error);
+        }
+      }
+
+      async loadDrivers() {
+        try {
+          const response = await fetch(this.driverUrl);
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Invalid JSON from drivers API:', text);
+            throw parseErr;
+          }
+          if (result.success) {
+            this.drivers = result.data || [];
+            this.populateDriverSelects();
+          }
+        } catch (error) {
+          console.warn('Error loading drivers:', error);
+        }
+      }
+
+      populateReservationSelects() {
+        const selects = [
+          document.getElementById('reservationIdInput'),
+          document.getElementById('editReservationId')
+        ];
+
+        selects.forEach(select => {
+          if (select) {
+            select.innerHTML = '<option value="">Select Reservation</option>' +
+              this.reservations.map(r => `<option value="${r.reservation_id}">${r.reservation_id} - ${r.requestor || 'Unknown'}</option>`).join('');
+          }
+        });
+      }
+
+      populateVehicleSelects() {
+        const selects = [
+          document.getElementById('vehicleIdInput'),
+          document.getElementById('editVehicleId')
+        ];
+
+        selects.forEach(select => {
+          if (select) {
+            select.innerHTML = '<option value="">Select Vehicle</option>' +
+              this.vehicles.map(v => `<option value="${v.vehicle_id}">${v.vehicle_id} - ${v.registration_no || 'Unknown'}</option>`).join('');
+          }
+        });
+      }
+
+      populateDriverSelects() {
+        const selects = [
+          document.getElementById('driverIdInput'),
+          document.getElementById('editDriverId')
+        ];
+
+        selects.forEach(select => {
+          if (select) {
+            select.innerHTML = '<option value="">Select Driver</option>' +
+              this.drivers.map(d => `<option value="${d.driver_id || d.id}">${d.driver_id || d.id} - ${d.name || 'Unknown'}</option>`).join('');
+          }
+        });
+      }
+
+      generateTripId() {
+        const prefix = 'TRIP-';
+        let max = 0;
+        if (Array.isArray(this.trips)) {
+          this.trips.forEach(t => {
+            const id = (t.trip_id || '').toString();
+            const m = id.match(/(\d+)$/);
+            if (m) {
+              const n = parseInt(m[1], 10);
+              if (!isNaN(n) && n > max) max = n;
+            }
+          });
+        }
+        const next = String(max + 1).padStart(3, '0');
+        const newId = prefix + next;
+        const input = document.getElementById('tripIdInput');
+        if (input) input.value = newId;
+      }
+
+      initializeForm() {
+        const form = document.getElementById('tripForm');
+        form.addEventListener('submit', (e) => this.handleSubmit(e));
+        form.addEventListener('reset', () => setTimeout(() => this.generateTripId(), 10));
+      }
+
+      setupModalListeners() {
+        document.getElementById('closeEditModal').addEventListener('click', () => {
+          document.getElementById('editTripModal').classList.remove('show');
+        });
+
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+          document.getElementById('editTripModal').classList.remove('show');
+        });
+
+        document.getElementById('editTripForm').addEventListener('submit', (e) => this.handleEditSubmit(e));
+
+        window.addEventListener('click', (e) => {
+          const modal = document.getElementById('editTripModal');
+          if (e.target === modal) {
+            modal.classList.remove('show');
+          }
+        });
+      }
+
+      showSuccess(message = 'Trip logged successfully!') {
+        const alert = document.getElementById('successAlert');
+        alert.innerHTML = '<i data-lucide="check-circle"></i> ' + message;
+        alert.classList.add('show');
+        lucide.createIcons();
+        setTimeout(() => alert.classList.remove('show'), 3000);
+      }
+
+      showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 3000);
+      }
+
+      async handleSubmit(e) {
+        e.preventDefault();
+
+        const formData = {
+          reservation_id: document.getElementById('reservationIdInput').value,
+          vehicle_id: document.getElementById('vehicleIdInput').value,
+          driver_id: document.getElementById('driverIdInput').value,
+          start_time: document.getElementById('startTimeInput').value,
+          end_time: document.getElementById('endTimeInput').value,
+          fuel_used: document.getElementById('fuelUsedInput').value,
+          distance: document.getElementById('distanceInput').value,
+          status: document.getElementById('statusInput').value,
+          incident: document.getElementById('incidentInput').value,
+          vendor_service: document.getElementById('vendorServiceInput').value,
+          audit_reference: document.getElementById('auditRefInput').value
+        };
+
+        if (!formData.reservation_id || !formData.vehicle_id || !formData.driver_id || !formData.start_time) {
+          this.showError('Reservation ID, Vehicle ID, Driver ID, and Start Time are required');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Unexpected response from trips API POST:', text);
+            throw parseErr;
+          }
+
+          if (result.success) {
+            this.showSuccess('Trip logged successfully');
+            document.getElementById('tripForm').reset();
+            this.loadTrips();
+          } else {
+            this.showError('Failed to log trip: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error logging trip: ' + error.message);
+        }
+      }
+
+      displayTrips() {
+        const tbody = document.getElementById('tripTableBody');
+
+        if (this.trips.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-secondary);">No trips found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.trips.map(trip => `
+          <tr>
+            <td><strong>${trip.trip_id}</strong></td>
+            <td>${trip.reservation_id || '-'}</td>
+            <td>${trip.vehicle_id || '-'}</td>
+            <td>${trip.driver_id || '-'}</td>
+            <td>${this.formatDateTime(trip.start_time)}</td>
+            <td>${this.formatDateTime(trip.end_time)}</td>
+            <td>${trip.fuel_used || '-'}</td>
+            <td>${trip.distance || '-'}</td>
+            <td>
+              <span class="status-badge status-${(trip.status || 'in-progress').toLowerCase().replace(' ', '-')}">
+                ${trip.status || 'In Progress'}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit" onclick="tripLogMgr.editTrip('${trip.trip_id}')">
+                  <i data-lucide="edit-2" class="lucide-icon"></i> Edit
+                </button>
+                <button class="btn-action btn-delete" onclick="tripLogMgr.deleteTrip('${trip.trip_id}')">
+                  <i data-lucide="trash-2" class="lucide-icon"></i> Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+        lucide.createIcons();
+      }
+
+      editTrip(tripId) {
+        const trip = this.trips.find(t => t.trip_id === tripId);
+        if (!trip) {
+          this.showError('Trip not found');
+          return;
+        }
+
+        // Populate modal fields
+        document.getElementById('editTripId').value = trip.trip_id;
+        document.getElementById('editTripIdDisplay').value = trip.trip_id;
+        document.getElementById('editReservationId').value = trip.reservation_id || '';
+        document.getElementById('editVehicleId').value = trip.vehicle_id || '';
+        document.getElementById('editDriverId').value = trip.driver_id || '';
+        document.getElementById('editStartTime').value = trip.start_time || '';
+        document.getElementById('editEndTime').value = trip.end_time || '';
+        document.getElementById('editFuelUsed').value = trip.fuel_used || '';
+        document.getElementById('editDistance').value = trip.distance || '';
+        document.getElementById('editStatus').value = trip.status || 'In Progress';
+        document.getElementById('editIncident').value = trip.incident || '';
+        document.getElementById('editVendorService').value = trip.vendor_service || '';
+        document.getElementById('editAuditRef').value = trip.audit_reference || '';
+
+        // Show modal
+        document.getElementById('editTripModal').classList.add('show');
+      }
+
+      async handleEditSubmit(e) {
+        e.preventDefault();
+
+        const formData = {
+          trip_id: document.getElementById('editTripId').value,
+          reservation_id: document.getElementById('editReservationId').value,
+          vehicle_id: document.getElementById('editVehicleId').value,
+          driver_id: document.getElementById('editDriverId').value,
+          start_time: document.getElementById('editStartTime').value,
+          end_time: document.getElementById('editEndTime').value,
+          fuel_used: document.getElementById('editFuelUsed').value,
+          distance: document.getElementById('editDistance').value,
+          status: document.getElementById('editStatus').value,
+          incident: document.getElementById('editIncident').value,
+          vendor_service: document.getElementById('editVendorService').value,
+          audit_reference: document.getElementById('editAuditRef').value
+        };
+
+        if (!formData.trip_id || !formData.reservation_id || !formData.vehicle_id || !formData.driver_id || !formData.start_time) {
+          this.showError('Trip ID, Reservation ID, Vehicle ID, Driver ID, and Start Time are required');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Unexpected response from trips API PUT:', text);
+            throw parseErr;
+          }
+
+          if (result.success) {
+            this.showSuccess('Trip updated successfully');
+            document.getElementById('editTripModal').classList.remove('show');
+            this.loadTrips();
+          } else {
+            this.showError('Failed to update trip: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error updating trip: ' + error.message);
+        }
+      }
+
+      async deleteTrip(tripId) {
+        if (!confirm('Are you sure you want to delete this trip?')) {
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ trip_id: tripId })
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            this.showSuccess('Trip deleted successfully');
+            this.loadTrips();
+          } else {
+            this.showError('Failed to delete trip: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error deleting trip: ' + error.message);
+        }
+      }
+
+      formatDateTime(dateTimeString) {
+        if (!dateTimeString) return '-';
+        const date = new Date(dateTimeString);
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+    }
+
+    let tripLogMgr;
+    document.addEventListener('DOMContentLoaded', () => {
+      tripLogMgr = new TripLogManager();
+    });
+  </script>
+</body>
+
+</html>

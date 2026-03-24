@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payroll Management</title>
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="../img/logo.png" />
+  </head>
+  <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i data-lucide="sun" class="sun-icon"></i>
+      <i data-lucide="moon" class="moon-icon"></i>
+    </button>
+
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="header-title">
+            <h1>Payroll Management</h1>
+          </div>
+        </div>
+        <div class="header-right">
+          <button
+            class="action-btn"
+            onclick="openPayrollModal()"
+            style="background: var(--brand-green); color: white"
+          >
+            <i data-lucide="plus-circle"></i> Process Payroll
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="content-card">
+          <div class="card-header">
+            <h3 class="card-title">Payroll History</h3>
+          </div>
+          <div class="card-body">
+            <div class="data-table" id="payrollTable">
+              <p style="text-align: center; padding: 20px">
+                Loading records...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../js/dashboard.js"></script>
+    <script>
+      lucide.createIcons();
+
+      // 1. Fetch and Display Payroll
+      async function loadPayroll() {
+        try {
+          const res = await fetch("../api/payroll.php");
+          const data = await res.json();
+
+          if (data.status === "success" && data.data.length > 0) {
+            const html = data.data
+              .map(
+                (p) => `
+                    <div class="table-row">
+                        <div class="client-info">
+                            <div class="client-avatar" style="background: #eee; color: #333;">${p.employee_name.charAt(0)}</div>
+                            <div>
+                                <span class="client-name">${p.employee_name}</span>
+                                <span class="client-detail">${p.position} | ${p.pay_period}</span>
+                            </div>
+                        </div>
+                        <div class="amount" style="display:flex; flex-direction:column; align-items:flex-end;">
+                            <span style="font-weight:bold;">$${p.net_pay}</span>
+                            <small style="color:#ef4444; font-size:0.8em;">-${p.deductions}</small>
+                        </div>
+                        <div>
+                            <span class="badge-status ${p.status === "Paid" ? "approved" : "pending"}">${p.status}</span>
+                        </div>
+                    </div>
+                `,
+              )
+              .join("");
+            document.getElementById("payrollTable").innerHTML = html;
+          } else {
+            document.getElementById("payrollTable").innerHTML =
+              '<p style="text-align:center; padding:20px;">No payroll records found.</p>';
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 2. Open Modal to Add New Payroll
+      function openPayrollModal() {
+        Swal.fire({
+          title: "Process New Payroll",
+          html: `
+                <input id="swal-name" class="swal2-input" placeholder="Employee Name">
+                <input id="swal-position" class="swal2-input" placeholder="Position">
+                <input id="swal-period" class="swal2-input" placeholder="Pay Period (e.g., Nov 1-15)">
+                <input id="swal-salary" type="number" class="swal2-input" placeholder="Basic Salary">
+                <input id="swal-deductions" type="number" class="swal2-input" placeholder="Deductions">
+            `,
+          confirmButtonText: "Process",
+          confirmButtonColor: "#2ca078",
+          showCancelButton: true,
+          preConfirm: () => {
+            return {
+              action: "create_payroll",
+              employee_name: document.getElementById("swal-name").value,
+              position: document.getElementById("swal-position").value,
+              pay_period: document.getElementById("swal-period").value,
+              basic_salary: document.getElementById("swal-salary").value,
+              deductions: document.getElementById("swal-deductions").value,
+            };
+          },
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const res = await fetch("../api/payroll.php", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(result.value),
+            });
+            const data = await res.json();
+            if (data.status === "success") {
+              Swal.fire("Success", "Payroll Processed!", "success");
+              loadPayroll(); // Refresh list
+            } else {
+              Swal.fire("Error", data.message, "error");
+            }
+          }
+        });
+      }
+
+      // Load on start
+      loadPayroll();
+    </script>
+  </body>
+</html>

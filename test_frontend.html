@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend</title>
+</head>
+<body>
+    <h2>Frontend Test</h2>
+    
+    <h3>1. Test vendor-registration.html directly</h3>
+    <a href="admin/vendor-registration.html" target="_blank">Open vendor-registration.html</a>
+    
+    <h3>2. Test API with JavaScript</h3>
+    <button onclick="testAPI()">Test vendors API</button>
+    <div id="apiResult"></div>
+    
+    <h3>3. Check Browser Console</h3>
+    <p>Press F12 and check for JavaScript errors when opening vendor-registration.html</p>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<p>Testing API...</p>';
+            
+            try {
+                const response = await fetch('api/vendors.php');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <h4>✅ API Working!</h4>
+                    <p>Status: ${response.status}</p>
+                    <p>Vendors loaded: ${data.data ? data.data.length : 0}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h4>❌ API Error</h4>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

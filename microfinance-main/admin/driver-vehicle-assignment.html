@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver & Vehicle Assignment</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    .content-area {
+      padding: 2rem;
+      background: var(--bg-primary);
+      min-height: calc(100vh - 100px);
+    }
+
+    .section-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--brand-green);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-info {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-info:hover {
+      opacity: 0.9;
+    }
+
+    .btn-purple {
+      background: #a855f7;
+      color: white;
+    }
+
+    .btn-purple:hover {
+      opacity: 0.9;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table thead {
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .data-table th {
+      padding: 0.75rem;
+      text-align: left;
+      color: var(--text-primary);
+      font-weight: 600;
+      border-bottom: 2px solid var(--brand-green);
+    }
+
+    .data-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .data-table tr:hover {
+      background: rgba(34, 197, 94, 0.05);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.25rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-available {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-assigned {
+      background: #dbeafe;
+      color: #0c2340;
+    }
+
+    .status-inactive {
+      background: #fee2e2;
+      color: #7f1d1d;
+    }
+
+    .status-active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-completed {
+      background: #dbeafe;
+      color: #0c2340;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #7f1d1d;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+      display: block;
+    }
+
+    .alert.error {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fca5a5;
+      display: block;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    /* view modal overrides to ensure they stand out */
+    #viewDriverModal .modal-content,
+    #viewAssignmentModal .modal-content {
+      background: #ffffff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* read-only field styling inside view modals */
+    #viewDriverModal .form-input,
+    #viewAssignmentModal .form-input {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      cursor: default;
+      padding: 0.5rem;
+    }
+
+    .modal-header {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i data-lucide="sun" class="sun-icon"></i><i
+      data-lucide="moon" class="moon-icon"></i></button>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper"><img src="../img/logo.png" alt="Logo" class="logo"></div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2><span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="panel-left-close"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+        <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a href="#" class="nav-item has-submenu" data-module="vendor"><i data-lucide="store"></i><span>Vendor
+            Portal</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+        <a href="#" class="nav-item has-submenu" data-module="vehicle"><i data-lucide="truck"></i><span>Vehicle
+            Reservation</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+        <a href="#" class="nav-item has-submenu" data-module="audit"><i data-lucide="clipboard-check"></i><span>Audit
+            Management</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+        <a href="#" class="nav-item has-submenu" data-module="fleet"><i data-lucide="car"></i><span>Fleet
+            Management</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+        <a href="#" class="nav-item has-submenu" data-module="document"><i data-lucide="file-text"></i><span>Document
+            Tracking</span><i data-lucide="chevron-down" class="chevron"></i></a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+      <div class="nav-section"><span class="nav-section-title">SETTINGS</span>
+        <a href="#" class="nav-item"><i data-lucide="settings"></i><span>Configuration</span></a>
+        <a href="#" class="nav-item"><i data-lucide="shield"></i><span>Security</span></a>
+        <a href="../login.html" class="nav-item"><i data-lucide="log-out"></i><span>Logout</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar"><img src="../img/profile.png" alt="User"></div>
+        <div class="user-info"><span class="user-name">John Doe</span><span class="user-role">Administrator</span></div>
+        <button class="user-menu-btn"><i data-lucide="more-vertical"></i></button>
+      </div>
+    </div>
+  </aside>
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
+        <div class="header-title">
+          <h1>Driver & Vehicle Assignment</h1>
+          <p>Assign drivers and vehicles to reservations</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box"><i data-lucide="search"></i><input type="search" placeholder="Search..."></div>
+        <button class="icon-btn"><i data-lucide="bell"></i></button>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">2.3 Driver & Vehicle Assignment</h3>
+              <p class="card-subtitle">Manage driver roster and assign drivers to vehicles for reservations</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="successAlert" class="alert alert-success"
+              style="margin-bottom: 1rem; padding: 1rem; border-radius: 6px; display: none;"><i
+                data-lucide="check-circle"></i> Operation successful!</div>
+            <div id="errorAlert" class="alert alert-error"
+              style="margin-bottom: 1rem; padding: 1rem; border-radius: 6px; display: none;"><i
+                data-lucide="alert-circle"></i> <span id="errorMessage">Error occurred</span></div>
+
+            <div
+              style="margin-bottom: 2rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
+              <h4
+                style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border-color);">
+                <i data-lucide="users"></i> Drivers
+              </h4>
+              <button class="btn"
+                style="background: var(--brand-green); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 500; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"
+                onclick="driverMgr.openDriverModal()">
+                <i data-lucide="plus"></i> Add Driver
+              </button>
+              <table
+                style="width: 100%; border-collapse: collapse; font-size: 0.85rem; background: var(--bg-primary); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+                <thead style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-color);">
+                  <tr>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">Driver
+                      ID</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">Name
+                    </th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      License No</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Contact</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">Status
+                    </th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="driverTableBody" style="color: var(--text-primary);">
+                  <tr>
+                    <td colspan="6" style="padding: 0.75rem; text-align: center;">Loading drivers...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              style="margin-bottom: 2rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
+              <h4
+                style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border-color);">
+                <i data-lucide="link"></i> Assignments
+              </h4>
+              <button class="btn"
+                style="background: var(--brand-green); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 500; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"
+                onclick="driverMgr.openAssignmentModal()">
+                <i data-lucide="plus"></i> New Assignment
+              </button>
+              <table
+                style="width: 100%; border-collapse: collapse; font-size: 0.85rem; background: var(--bg-primary); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+                <thead style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-color);">
+                  <tr>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Assignment ID</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Reservation ID</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Requestor</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">Driver
+                      ID</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Vehicle ID</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">Status
+                    </th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary);">
+                      Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="assignmentTableBody" style="color: var(--text-primary);">
+                  <tr>
+                    <td colspan="6" style="padding: 0.75rem; text-align: center;">Loading assignments...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/dashboard.js"></script>
+  <style>
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .alert.show {
+      display: block !important;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-available {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-assigned {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+
+    .status-inactive {
+      background: rgba(156, 163, 175, 0.15);
+      color: #6b7280;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+  </style>
+
+  <div id="driverModal" class="modal" style="display: none;">
+    <div
+      style="background: #ffffff; border-radius: 8px; width: 90%; max-width: 600px; padding: 1.5rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+      <div class="modal-header">
+        <span id="modalTitle">Add Driver</span>
+        <button class="modal-close" onclick="driverMgr.closeDriverModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Driver ID <span style="color: #ef4444;">*</span></label>
+        <input type="text" id="driverIdInput" placeholder="DRV-001" readonly
+          style="background:#f3f4f6;cursor:not-allowed;">
+      </div>
+      <div class="form-group">
+        <label>Name <span style="color: #ef4444;">*</span></label>
+        <input type="text" id="driverNameInput" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>License Number</label>
+        <input type="text" id="licenseInput" placeholder="License number">
+      </div>
+      <div class="form-group">
+        <label>Contact Number</label>
+        <input type="text" id="contactInput" placeholder="Phone number">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="driverStatusInput">
+          <option value="Available">Available</option>
+          <option value="Assigned">Assigned</option>
+          <option value="On Leave">On Leave</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+      <div
+        style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <button class="btn"
+          style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;"
+          onclick="driverMgr.closeDriverModal()">Cancel</button>
+        <button id="saveDriverBtn" class="btn"
+          style="background: var(--brand-green); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;"
+          onclick="driverMgr.saveDriver()">Save Driver</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="assignmentModal" class="modal" style="display: none;">
+    <div
+      style="background: #ffffff; border-radius: 8px; width: 90%; max-width: 600px; padding: 1.5rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+      <div class="modal-header">
+        <span id="modalTitle">New Assignment</span>
+        <button class="modal-close" onclick="driverMgr.closeAssignmentModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Assignment ID <span style="color: #ef4444;">*</span></label>
+        <input type="text" id="assignmentIdInput" placeholder="ASGN-001" readonly
+          style="background:#f3f4f6;cursor:not-allowed;">
+      </div>
+      <div class="form-group">
+        <label>Reservation ID</label>
+        <select id="resIdInput" class="form-select">
+          <option value="">-- select reservation --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Driver ID <span style="color: #ef4444;">*</span></label>
+        <select id="assignDriverIdInput" class="form-select">
+          <option value="">-- select driver --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Vehicle ID <span style="color: #ef4444;">*</span></label>
+        <select id="assignVehicleIdInput" class="form-select">
+          <option value="">-- select vehicle --</option>
+        </select>
+      </div>
+      <div
+        style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <button class="btn"
+          style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;"
+          onclick="driverMgr.closeAssignmentModal()">Cancel</button>
+        <button class="btn" id="saveAssignBtn"
+          style="background: var(--brand-green); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;"
+          onclick="driverMgr.saveAssignment()">Create Assignment</button>
+        <button id="deleteAssignBtn" class="btn btn-danger" style="display:none;"
+          onclick="driverMgr.deleteAssignment()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- view driver modal -->
+  <div id="viewDriverModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Driver Details</span>
+        <button class="modal-close" onclick="driverMgr.closeViewDriverModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Driver ID</label>
+        <div id="viewDriverId" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <div id="viewDriverName" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">License #</label>
+        <div id="viewLicense" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact</label>
+        <div id="viewContact" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <div id="viewStatus" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assigned Reservations</label>
+        <div id="viewDriverReservations" class="form-input"></div>
+      </div>
+      <div style="text-align:right;">
+        <button class="btn"
+          style="background:var(--bg-secondary); color:var(--text-primary); border:1px solid var(--border-color);"
+          onclick="driverMgr.closeViewDriverModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- view assignment modal -->
+  <div id="viewAssignmentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Assignment Details</span>
+        <button class="modal-close" onclick="driverMgr.closeViewAssignmentModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assignment ID</label>
+        <div id="viewAssignmentId" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reservation ID</label>
+        <div id="viewAssignRes" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Requestor</label>
+        <div id="viewAssignRequestor" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Driver ID</label>
+        <div id="viewAssignDriver" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vehicle ID</label>
+        <div id="viewAssignVehicle" class="form-input"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <div id="viewAssignStatus" class="form-input"></div>
+      </div>
+      <div style="text-align:right;">
+        <button class="btn"
+          style="background:var(--bg-secondary); color:var(--text-primary); border:1px solid var(--border-color);"
+          onclick="driverMgr.closeViewAssignmentModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    class DriverAssignmentManager {
+      constructor() {
+        this.drivers = [];
+        this.assignments = [];
+        this.vehicles = [];
+        this.reservations = [];
+        this.editingAssignment = null;
+        this.driverUrl = '../api/drivers.php';
+        this.assignmentUrl = '../api/assignments.php';
+        this.vehicleUrl = '../api/vehicles.php';
+        this.reservationUrl = '../api/reservations.php';
+        this.loadDrivers();
+        this.loadAssignments();
+        this.loadVehicles();
+        this.loadReservations();
+      }
+
+      async loadDrivers() {
+        try {
+          const response = await fetch(this.driverUrl);
+          const text = await response.text();
+          const result = this.safeParse(text) || {};
+          if (result.success) this.drivers = result.data || [];
+          this.displayDrivers();
+        } catch (error) {
+          this.showError('Error loading drivers: ' + error.message);
+        }
+      }
+
+      async loadAssignments() {
+        try {
+          const response = await fetch(this.assignmentUrl);
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('JSON parse error. Raw response:', text.substring(0, 500));
+            result = { success: false, data: [] };
+          }
+          if (result.success) this.assignments = result.data || [];
+          // ensure we have latest reservation data for requestors
+          await this.loadReservations();
+          this.displayAssignments();
+        } catch (error) {
+          console.error('Assignment load failed', error);
+          this.showError('Could not load assignments; using empty list');
+          this.assignments = [];
+          this.displayAssignments();
+        }
+      }
+
+      // safe JSON parse to avoid errors when server returns HTML
+      safeParse(text) {
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          console.error('JSON parse error, response:', text);
+          return null;
+        }
+      }
+
+      async loadVehicles() {
+        try {
+          const resp = await fetch(this.vehicleUrl);
+          const text = await resp.text();
+          const result = this.safeParse(text) || {};
+          if (result.success && Array.isArray(result.data)) {
+            this.vehicles = result.data;
+          }
+        } catch (err) {
+          console.error('Error loading vehicles', err);
+        }
+      }
+
+      async loadReservations() {
+        try {
+          const resp = await fetch(this.reservationUrl);
+          const text = await resp.text();
+          const result = this.safeParse(text) || {};
+          if (result.success && Array.isArray(result.data)) {
+            this.reservations = result.data;
+          }
+        } catch (err) {
+          console.error('Error loading reservations', err);
+        }
+      }
+
+      generateDriverId() {
+        const prefix = 'DRV-';
+        let max = 0;
+        this.drivers.forEach(d => {
+          const m = (d.driver_id || '').match(/(\d+)$/);
+          if (m) {
+            const n = parseInt(m[1], 10);
+            if (!isNaN(n) && n > max) max = n;
+          }
+        });
+        return prefix + String(max + 1).padStart(3, '0');
+      }
+
+      generateAssignmentId() {
+        const prefix = 'ASGN-';
+        let max = 0;
+        this.assignments.forEach(a => {
+          const m = (a.assignment_id || '').match(/(\d+)$/);
+          if (m) {
+            const n = parseInt(m[1], 10);
+            if (!isNaN(n) && n > max) max = n;
+          }
+        });
+        return prefix + String(max + 1).padStart(3, '0');
+      }
+
+      populateReservationDropdown() {
+        const sel = document.getElementById('resIdInput');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">-- select reservation --</option>' +
+          this.reservations.map(r => `<option value="${r.reservation_id}">${r.reservation_id}</option>`).join('');
+      }
+
+      populateDriverDropdown() {
+        const sel = document.getElementById('assignDriverIdInput');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">-- select driver --</option>' +
+          this.drivers.map(d => `<option value="${d.driver_id}">${d.driver_id} - ${d.name}</option>`).join('');
+      }
+
+      populateVehicleDropdown() {
+        const sel = document.getElementById('assignVehicleIdInput');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">-- select vehicle --</option>' +
+          this.vehicles.map(v => `<option value="${v.vehicle_id}">${v.vehicle_id} - ${v.vehicle_type}</option>`).join('');
+      }
+
+      displayDrivers() {
+        const tbody = document.getElementById('driverTableBody');
+        if (!this.drivers.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="padding: 0.75rem; text-align: center;">No drivers registered</td></tr>';
+          return;
+        }
+        tbody.innerHTML = this.drivers.map(d => `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.75rem;"><strong>${d.driver_id}</strong></td>
+            <td style="padding: 0.75rem;">${d.name}</td>
+            <td style="padding: 0.75rem;">${d.license_number || '-'}</td>
+            <td style="padding: 0.75rem;">${d.contact_number || '-'}</td>
+            <td style="padding: 0.75rem;"><span class="status-badge status-${d.status.toLowerCase().replace(' ', '')}">${d.status}</span></td>
+            <td style="padding: 0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button class="btn-action" onclick="driverMgr.editDriver('${d.driver_id}')"><i data-lucide="edit"></i> Edit</button>
+              <button class="btn-action" onclick="driverMgr.viewDriver('${d.driver_id}')"><i data-lucide="eye"></i> View</button>
+              <button class="btn-action btn-delete" onclick="driverMgr.deleteDriver('${d.driver_id}')"><i data-lucide="trash-2"></i> Delete</button>
+            </td>
+          </tr>
+        `).join('');
+        lucide.createIcons();
+      }
+
+      displayAssignments() {
+        const tbody = document.getElementById('assignmentTableBody');
+        if (!this.assignments.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="padding: 0.75rem; text-align: center;">No assignments</td></tr>';
+          return;
+        }
+        tbody.innerHTML = this.assignments.map(a => {
+          const reservation = this.reservations.find(r => r.reservation_id === a.reservation_id) || {};
+          return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.75rem;"><strong>${a.assignment_id}</strong></td>
+            <td style="padding: 0.75rem;">${a.reservation_id || '-'}</td>
+            <td style="padding: 0.75rem;">${reservation.requestor || '-'}</td>
+            <td style="padding: 0.75rem;">${a.driver_id}</td>
+            <td style="padding: 0.75rem;">${a.vehicle_id}</td>
+            <td style="padding: 0.75rem;"><span class="status-badge status-${a.status.toLowerCase()}">${a.status}</span></td>
+            <td style="padding: 0.75rem;">
+              <button class="btn-action" onclick="driverMgr.viewAssignment('${a.assignment_id}')"><i data-lucide="eye"></i> View</button>
+              <button class="btn-action" onclick="driverMgr.editAssignment('${a.assignment_id}')"><i data-lucide="edit"></i> Edit</button>
+              <button class="btn-action" onclick="driverMgr.updateAssignmentStatus('${a.assignment_id}','Active')"><i data-lucide="check"></i> Confirm</button>
+              <button class="btn-action" onclick="driverMgr.updateAssignmentStatus('${a.assignment_id}','Cancelled')"><i data-lucide="x"></i> Cancel</button>
+              <button class="btn-action btn-delete" onclick="driverMgr.deleteAssignment('${a.assignment_id}')"><i data-lucide="trash-2"></i> Delete</button>
+            </td>
+          </tr>
+        `;
+        }).join('');
+        lucide.createIcons();
+      }
+
+      openDriverModal() {
+        // new driver
+        this.editingDriver = null;
+        document.getElementById('driverIdInput').value = this.generateDriverId();
+        document.getElementById('modalTitle').textContent = 'Add Driver';
+        const saveBtn = document.getElementById('saveDriverBtn');
+        if (saveBtn) saveBtn.textContent = 'Save Driver';
+        document.getElementById('driverModal').style.display = 'flex';
+      }
+      closeDriverModal() { document.getElementById('driverModal').style.display = 'none'; }
+
+      editDriver(id) {
+        const d = this.drivers.find(x => x.driver_id === id);
+        if (!d) return;
+        this.editingDriver = id;
+        document.getElementById('driverIdInput').value = d.driver_id;
+        document.getElementById('driverNameInput').value = d.name;
+        document.getElementById('licenseInput').value = d.license_number || '';
+        document.getElementById('contactInput').value = d.contact_number || '';
+        document.getElementById('driverStatusInput').value = d.status;
+        document.getElementById('modalTitle').textContent = 'Edit Driver';
+        const saveBtn = document.getElementById('saveDriverBtn');
+        if (saveBtn) saveBtn.textContent = 'Update Driver';
+        document.getElementById('driverModal').style.display = 'flex';
+      }
+
+      viewDriver(id) {
+        // open a read‑only modal with driver details and linked reservations
+        const d = this.drivers.find(x => x.driver_id === id);
+        if (!d) return;
+        const related = this.assignments.filter(a => a.driver_id === id).map(a => a.reservation_id).filter(Boolean);
+        document.getElementById('viewDriverId').textContent = d.driver_id;
+        document.getElementById('viewDriverName').textContent = d.name;
+        document.getElementById('viewLicense').textContent = d.license_number || '-';
+        document.getElementById('viewContact').textContent = d.contact_number || '-';
+        document.getElementById('viewStatus').textContent = d.status;
+        document.getElementById('viewDriverReservations').textContent = related.length ? related.join(', ') : 'None';
+        document.getElementById('viewDriverModal').classList.add('active');
+      }
+
+      viewAssignment(id) {
+        // show assignment details in a modal
+        const a = this.assignments.find(x => x.assignment_id === id);
+        if (!a) return;
+        const r = this.reservations.find(x => x.reservation_id === a.reservation_id) || {};
+        document.getElementById('viewAssignmentId').textContent = a.assignment_id;
+        document.getElementById('viewAssignRes').textContent = a.reservation_id || '-';
+        document.getElementById('viewAssignRequestor').textContent = r.requestor || '-';
+        document.getElementById('viewAssignDriver').textContent = a.driver_id;
+        document.getElementById('viewAssignVehicle').textContent = a.vehicle_id;
+        document.getElementById('viewAssignStatus').textContent = a.status;
+        document.getElementById('viewAssignmentModal').classList.add('active');
+      }
+
+      openAssignmentModal() {
+        // prepare form for new assignment
+        this.editingAssignment = null;
+        document.getElementById('assignmentIdInput').value = this.generateAssignmentId();
+        this.populateReservationDropdown();
+        this.populateDriverDropdown();
+        this.populateVehicleDropdown();
+        document.getElementById('deleteAssignBtn').style.display = 'none';
+        document.getElementById('modalTitle').textContent = 'New Assignment';
+        const saveBtn = document.getElementById('saveAssignBtn');
+        if (saveBtn) saveBtn.textContent = 'Create Assignment';
+        document.getElementById('assignmentModal').style.display = 'flex';
+      }
+
+      editAssignment(id) {
+        const a = this.assignments.find(x => x.assignment_id === id);
+        if (!a) return;
+        this.editingAssignment = id;
+        this.populateReservationDropdown();
+        this.populateDriverDropdown();
+        this.populateVehicleDropdown();
+        document.getElementById('assignmentIdInput').value = a.assignment_id;
+        document.getElementById('resIdInput').value = a.reservation_id;
+        document.getElementById('assignDriverIdInput').value = a.driver_id;
+        document.getElementById('assignVehicleIdInput').value = a.vehicle_id;
+        document.getElementById('modalTitle').textContent = 'Edit Assignment';
+        const saveBtn = document.getElementById('saveAssignBtn');
+        if (saveBtn) saveBtn.textContent = 'Update Assignment';
+        document.getElementById('deleteAssignBtn').style.display = 'inline-block';
+        document.getElementById('assignmentModal').style.display = 'flex';
+      }
+      closeAssignmentModal() { document.getElementById('assignmentModal').style.display = 'none'; }
+      // new helper methods for view modals
+      closeViewDriverModal() { document.getElementById('viewDriverModal').classList.remove('active'); }
+      closeViewAssignmentModal() { document.getElementById('viewAssignmentModal').classList.remove('active'); }
+
+      async saveDriver() {
+        const data = {
+          driver_id: document.getElementById('driverIdInput').value,
+          name: document.getElementById('driverNameInput').value,
+          license_number: document.getElementById('licenseInput').value,
+          contact_number: document.getElementById('contactInput').value,
+          status: document.getElementById('driverStatusInput').value
+        };
+        if (!data.driver_id || !data.name) {
+          this.showError('Driver ID and Name required');
+          return;
+        }
+        try {
+          // Use PUT method for editing, POST for creating
+          const method = this.editingDriver ? 'PUT' : 'POST';
+          const response = await fetch(this.driverUrl, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const text = await response.text();
+          const result = this.safeParse(text) || {};
+          if (result && typeof result.success !== 'undefined') {
+            if (result.success) {
+              const message = this.editingDriver ? 'Driver updated' : 'Driver added';
+              this.showSuccess(message);
+              this.closeDriverModal();
+              this.loadDrivers();
+            } else {
+              this.showError(result.message || 'Operation failed');
+            }
+          } else {
+            console.error('Unexpected driver API response:', text);
+            this.showError('Server returned unexpected response: ' + text);
+          }
+        } catch (error) {
+          this.showError(error.message);
+        }
+      }
+
+      async saveAssignment() {
+        const data = {
+          assignment_id: document.getElementById('assignmentIdInput').value,
+          reservation_id: document.getElementById('resIdInput').value,
+          driver_id: document.getElementById('assignDriverIdInput').value,
+          vehicle_id: document.getElementById('assignVehicleIdInput').value
+        };
+        if (!data.assignment_id || !data.driver_id || !data.vehicle_id) {
+          this.showError('Assignment ID, Driver ID, and Vehicle ID required');
+          return;
+        }
+        try {
+          const response = await fetch(this.assignmentUrl, {
+            method: this.editingAssignment ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const text = await response.text();
+          const result = this.safeParse(text) || {};
+          if (result && typeof result.success !== 'undefined') {
+            if (result.success) {
+              if (this.editingAssignment) {
+                this.showSuccess('Assignment updated');
+              } else {
+                this.showSuccess('Assignment created');
+              }
+              this.closeAssignmentModal();
+              this.loadAssignments();
+              this.loadReservations();
+            } else {
+              this.showError(result.message || 'Operation failed');
+            }
+          } else {
+            console.error('Unexpected assignment API response:', text);
+            this.showError('Server returned unexpected response: ' + text);
+          }
+        } catch (error) {
+          this.showError(error.message);
+        }
+      }
+
+      async deleteDriver(driverId) {
+        if (!confirm('Delete this driver?')) return;
+        try {
+          const response = await fetch(this.driverUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ driver_id: driverId })
+          });
+          const text = await response.text();
+          const result = this.safeParse(text) || {};
+          if (result && typeof result.success !== 'undefined') {
+            if (result.success) {
+              this.showSuccess('Driver deleted');
+              this.loadDrivers();
+            } else {
+              this.showError(result.message || 'Operation failed');
+            }
+          } else {
+            console.error('Unexpected delete-driver response:', text);
+            this.showError('Server returned unexpected response');
+          }
+        } catch (error) {
+          this.showError(error.message);
+        }
+      }
+
+      async deleteAssignment(assignmentId) {
+        const id = assignmentId || this.editingAssignment;
+        if (!id) return;
+        if (!confirm('Delete this assignment?')) return;
+        try {
+          const response = await fetch(this.assignmentUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ assignment_id: id })
+          });
+          const text = await response.text();
+          const result = this.safeParse(text) || {};
+          if (result && typeof result.success !== 'undefined') {
+            if (result.success) {
+              this.showSuccess('Assignment deleted');
+              this.closeAssignmentModal();
+              this.loadAssignments();
+              this.loadReservations();
+            } else {
+              this.showError(result.message || 'Operation failed');
+            }
+          } else {
+            console.error('Unexpected delete-assignment response:', text);
+            this.showError('Server returned unexpected response');
+          }
+        } catch (error) {
+          this.showError(error.message);
+        }
+      }
+
+      async updateAssignmentStatus(id, status) {
+        try {
+          const response = await fetch(this.assignmentUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ assignment_id: id, status })
+          });
+          const text = await response.text();
+          const result = this.safeParse(text) || {};
+          if (result && typeof result.success !== 'undefined') {
+            if (result.success) {
+              this.showSuccess('Assignment ' + status.toLowerCase());
+              this.loadAssignments();
+            } else {
+              this.showError(result.message || 'Operation failed');
+            }
+          } else {
+            console.error('Unexpected update-assignment-status response:', text);
+            this.showError('Server returned unexpected response');
+          }
+        } catch (error) {
+          this.showError(error.message);
+        }
+      }
+
+      showSuccess(msg) {
+        const alert = document.getElementById('successAlert');
+        alert.innerHTML = '<i data-lucide="check-circle"></i> ' + msg;
+        alert.classList.add('show');
+        lucide.createIcons();
+        setTimeout(() => alert.classList.remove('show'), 3000);
+      }
+
+      showError(msg) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = msg;
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 3000);
+      }
+    }
+
+    let driverMgr;
+    document.addEventListener('DOMContentLoaded', () => {
+      driverMgr = new DriverAssignmentManager();
+    });
+  </script>
+</body>
+
+</html>

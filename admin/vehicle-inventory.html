@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Inventory Administration</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <style>
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor">
+          <i data-lucide="store"></i>
+          <span>Vendor Portal</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle">
+          <i data-lucide="truck"></i>
+          <span>Vehicle Reservation</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit">
+          <i data-lucide="clipboard-check"></i>
+          <span>Audit Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet">
+          <i data-lucide="car"></i>
+          <span>Fleet Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document">
+          <i data-lucide="file-text"></i>
+          <span>Document Tracking</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">SETTINGS</span>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Configuration</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="shield"></i>
+          <span>Security</span>
+        </a>
+
+        <a href="../login.html" class="nav-item">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <img src="../img/profile.png" alt="User">
+        </div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <button class="user-menu-btn">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1>Vehicle Inventory Administration</h1>
+          <p>Manage vehicle fleet and inventory</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">2.1 Vehicle Inventory Administration</h3>
+              <p class="card-subtitle">Manage vehicles, plate numbers, types, status and fleet assignments</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="successAlert" class="alert alert-success">
+              <i data-lucide="check-circle"></i> Vehicle saved successfully!
+            </div>
+            <div id="errorAlert" class="alert alert-error">
+              <i data-lucide="alert-circle"></i> <span id="errorMessage">Please fill all required fields</span>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="truck"></i> Add New Vehicle</h4>
+              <form id="vehicleForm" class="form-grid">
+                <div class="form-group">
+                  <label>Vehicle ID <span style="color: #ef4444;">*</span></label>
+                  <input type="text" id="vehicleIdInput" placeholder="VEH-001" required readonly>
+                </div>
+
+                <div class="form-group">
+                  <label>Plate No <span style="color: #ef4444;">*</span></label>
+                  <input type="text" id="plateNoInput" placeholder="ABC-1234" required>
+                </div>
+
+                <div class="form-group">
+                  <label>Type <span style="color: #ef4444;">*</span></label>
+                  <input type="text" id="typeInput" placeholder="Sedan, Truck, Van, etc." required>
+                </div>
+
+                <div class="form-group">
+                  <label>Status <span style="color: #ef4444;">*</span></label>
+                  <select id="statusInput" required>
+                    <option value="">Select Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Retired">Retired</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Make/Model</label>
+                  <input type="text" id="makeModelInput" placeholder="Toyota Camry, Ford Transit, etc.">
+                </div>
+
+                <div class="form-group">
+                  <label>Year</label>
+                  <input type="number" id="yearInput" placeholder="2023">
+                </div>
+
+                <div class="form-group">
+                  <label>Assigned Fleet ID</label>
+                  <input type="text" id="fleetIdInput" placeholder="FLEET-001">
+                </div>
+
+                <div class="form-group">
+                  <label>Vendor ID</label>
+                  <select id="vendorIdInput">
+                    <option value="">Select Vendor</option>
+                  </select>
+                </div>
+
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i> Add Vehicle
+                  </button>
+                  <button type="reset" class="btn btn-secondary">
+                    <i data-lucide="refresh-cw"></i> Clear Form
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Edit Vehicle Modal -->
+            <div id="editVehicleModal" class="modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2>Edit Vehicle Information</h2>
+                  <button class="modal-close" id="closeEditModal">&times;</button>
+                </div>
+                <form id="editVehicleForm" class="modal-body">
+                  <input type="hidden" id="editVehicleId">
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div class="form-group">
+                      <label>Vehicle ID (Read-only)</label>
+                      <input type="text" id="editVehicleIdDisplay" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Plate No <span style="color: #ef4444;">*</span></label>
+                      <input type="text" id="editPlateNo" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Vehicle Type <span style="color: #ef4444;">*</span></label>
+                      <input type="text" id="editType" placeholder="Sedan, Truck, Van, etc." required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Status <span style="color: #ef4444;">*</span></label>
+                      <select id="editStatus" required>
+                        <option value="">Select Status</option>
+                        <option value="Available">Available</option>
+                        <option value="In Use">In Use</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Retired">Retired</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Make/Model</label>
+                      <input type="text" id="editMakeModel" placeholder="Toyota Camry, Ford Transit, etc.">
+                    </div>
+
+                    <div class="form-group">
+                      <label>Year</label>
+                      <input type="number" id="editYear" placeholder="2023">
+                    </div>
+
+                    <div class="form-group">
+                      <label>Assigned Fleet ID</label>
+                      <input type="text" id="editFleetId" placeholder="FLEET-001">
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+                      <i data-lucide="x"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      <i data-lucide="save"></i> Update Vehicle
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="list"></i> Vehicle Inventory</h4>
+              <table class="vendor-table" id="vehicleTable">
+                <thead>
+                  <tr>
+                    <th>Vehicle ID</th>
+                    <th>Plate No</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Fleet ID</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="vehicleTableBody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-secondary);">No vehicles in inventory
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="clock"></i> Recent Reservations</h4>
+              <table class="vendor-table" id="recentReservationsTable">
+                <thead>
+                  <tr>
+                    <th>Reservation ID</th>
+                    <th>Vehicle</th>
+                    <th>Requestor</th>
+                    <th>Schedule</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="recentReservationsBody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-secondary);">No recent reservations
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/dashboard.js"></script>
+  <style>
+    /* Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    .vendor-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .vendor-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .vendor-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .vendor-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .vendor-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-inactive {
+      background: rgba(156, 163, 175, 0.15);
+      color: #6b7280;
+    }
+
+    .status-maintenance {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-edit {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-edit:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+  <script>
+    lucide.createIcons();
+
+    class VehicleInventoryManager {
+      constructor() {
+        this.vehicles = [];
+        this.reservations = [];
+        this.apiUrl = '../api/vehicles.php';
+        this.reservationUrl = '../api/reservations.php';
+        this.initializeForm();
+        this.setupModalListeners();
+        this.loadVendors();
+        this.loadVehicles();
+        this.loadReservations();
+      }
+
+      async loadVehicles() {
+        try {
+          const response = await fetch(this.apiUrl);
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Invalid JSON from vehicles API:', text);
+            throw parseErr;
+          }
+          if (result.success) {
+            this.vehicles = result.data || [];
+          } else {
+            this.showError('Failed to load vehicles: ' + result.message);
+          }
+          this.displayVehicles();
+          // generate next vehicle id after vehicles are loaded
+          this.generateVehicleId();
+        } catch (error) {
+          this.showError('Error loading vehicles: ' + error.message);
+        }
+      }
+
+      async loadReservations() {
+        try {
+          const response = await fetch(this.reservationUrl);
+          const result = await response.json();
+          if (result.success) {
+            this.reservations = result.data || [];
+          }
+          this.displayReservations();
+        } catch (error) {
+          console.warn('Error loading reservations:', error);
+        }
+      }
+
+      async loadVendors() {
+        try {
+          const res = await fetch('../api/vendors.php');
+          const text = await res.text();
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (pe) {
+            console.warn('Invalid JSON from vendors API:', text);
+            return;
+          }
+          if (data.success && Array.isArray(data.data)) {
+            const sel = document.getElementById('vendorIdInput');
+            sel.innerHTML = '<option value="">Select Vendor</option>' + data.data.map(v => `<option value="${v.vendor_id}">${v.vendor_id}${v.name ? (' - ' + v.name) : ''}</option>`).join('');
+          }
+        } catch (err) {
+          console.warn('Error loading vendors:', err);
+        }
+      }
+
+      initializeForm() {
+        const form = document.getElementById('vehicleForm');
+        form.addEventListener('submit', (e) => this.handleSubmit(e));
+        // regenerate vehicle id on form reset
+        form.addEventListener('reset', () => setTimeout(() => this.generateVehicleId(), 10));
+      }
+
+      generateVehicleId() {
+        const prefix = 'VEH-';
+        let max = 0;
+        if (Array.isArray(this.vehicles)) {
+          this.vehicles.forEach(v => {
+            const id = (v.vehicle_id || '').toString();
+            const m = id.match(/(\d+)$/);
+            if (m) {
+              const n = parseInt(m[1], 10);
+              if (!isNaN(n) && n > max) max = n;
+            }
+          });
+        }
+        const next = String(max + 1).padStart(3, '0');
+        const newId = prefix + next;
+        const input = document.getElementById('vehicleIdInput');
+        if (input) input.value = newId;
+      }
+
+      showSuccess(message = 'Vehicle saved successfully') {
+        const alert = document.getElementById('successAlert');
+        alert.innerHTML = '<i data-lucide="check-circle"></i> ' + message;
+        alert.classList.add('show');
+        lucide.createIcons();
+        setTimeout(() => alert.classList.remove('show'), 3000);
+      }
+
+      showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 3000);
+      }
+
+      async handleSubmit(e) {
+        e.preventDefault();
+
+        const formData = {
+          vehicle_id: document.getElementById('vehicleIdInput').value,
+          plate_no: document.getElementById('plateNoInput').value,
+          type: document.getElementById('typeInput').value,
+          status: document.getElementById('statusInput').value,
+          make_model: document.getElementById('makeModelInput').value,
+          year: document.getElementById('yearInput').value,
+          fleet_id: document.getElementById('fleetIdInput').value,
+          vendor_id: document.getElementById('vendorIdInput').value
+        };
+
+        if (!formData.vehicle_id || !formData.plate_no || !formData.type || !formData.status) {
+          this.showError('Vehicle ID, Plate No, Type, and Status are required');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Unexpected response from vehicles API POST:', text);
+            throw parseErr;
+          }
+          if (result.success) {
+            this.showSuccess('Vehicle added successfully');
+            document.getElementById('vehicleForm').reset();
+            this.loadVehicles();
+          } else {
+            this.showError('Failed to add vehicle: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error adding vehicle: ' + error.message);
+        }
+      }
+
+      displayVehicles() {
+        const tbody = document.getElementById('vehicleTableBody');
+
+        if (this.vehicles.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No vehicles in inventory</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.vehicles.map(vehicle => `
+          <tr>
+            <td><strong>${vehicle.vehicle_id}</strong></td>
+            <td>${vehicle.registration_no || '-'}</td>
+            <td>${vehicle.vehicle_type || '-'}</td>
+            <td>
+              <span class="status-badge status-${vehicle.status.toLowerCase()}">
+                ${vehicle.status}
+              </span>
+            </td>
+            <td>${vehicle.fleet_id || '-'}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit" onclick="vehicleInventory.editVehicle('${vehicle.vehicle_id}')">
+                  <i data-lucide="edit-2" class="lucide-icon"></i> Edit
+                </button>
+                <button class="btn-action btn-delete" onclick="vehicleInventory.deleteVehicle('${vehicle.vehicle_id}')">
+                  <i data-lucide="trash-2" class="lucide-icon"></i> Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+        lucide.createIcons();
+      }
+
+      displayReservations() {
+        const tbody = document.getElementById('recentReservationsBody');
+
+        if (this.reservations.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No reservations</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.reservations.slice(0, 5).map(res => `
+          <tr>
+            <td><strong>${res.reservation_id}</strong></td>
+            <td>${res.vehicle_id || '-'}</td>
+            <td>${res.requestor || '-'}</td>
+            <td>${res.schedule || '-'}</td>
+            <td>
+              <span class="status-badge status-${res.approval_status.toLowerCase()}">
+                ${res.approval_status}
+              </span>
+            </td>
+            <td><a href="reservation-request.html" style="color: var(--brand-green); text-decoration: none;">View</a></td>
+          </tr>
+        `).join('');
+        lucide.createIcons();
+      }
+
+      editVehicle(vehicleId) {
+        const vehicle = this.vehicles.find(v => v.vehicle_id === vehicleId);
+        if (!vehicle) {
+          this.showError('Vehicle not found');
+          return;
+        }
+
+        // Populate modal fields
+        document.getElementById('editVehicleId').value = vehicle.vehicle_id;
+        document.getElementById('editVehicleIdDisplay').value = vehicle.vehicle_id;
+        document.getElementById('editPlateNo').value = vehicle.registration_no || '';
+        document.getElementById('editType').value = vehicle.vehicle_type || '';
+        document.getElementById('editStatus').value = vehicle.status || '';
+        document.getElementById('editMakeModel').value = vehicle.make_model || '';
+        document.getElementById('editYear').value = vehicle.year || '';
+        document.getElementById('editFleetId').value = vehicle.fleet_id || '';
+
+        // Show modal
+        document.getElementById('editVehicleModal').classList.add('show');
+      }
+
+      setupModalListeners() {
+        // Edit modal controls
+        document.getElementById('closeEditModal').addEventListener('click', () => {
+          document.getElementById('editVehicleModal').classList.remove('show');
+        });
+
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+          document.getElementById('editVehicleModal').classList.remove('show');
+        });
+
+        // Edit form submission
+        document.getElementById('editVehicleForm').addEventListener('submit', (e) => this.handleEditSubmit(e));
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+          const modal = document.getElementById('editVehicleModal');
+          if (e.target === modal) {
+            modal.classList.remove('show');
+          }
+        });
+      }
+
+      async handleEditSubmit(e) {
+        e.preventDefault();
+
+        const formData = {
+          vehicle_id: document.getElementById('editVehicleId').value,
+          plate_no: document.getElementById('editPlateNo').value,
+          type: document.getElementById('editType').value,
+          status: document.getElementById('editStatus').value,
+          make_model: document.getElementById('editMakeModel').value,
+          year: document.getElementById('editYear').value,
+          fleet_id: document.getElementById('editFleetId').value
+        };
+
+        if (!formData.vehicle_id || !formData.plate_no || !formData.type || !formData.status) {
+          this.showError('Vehicle ID, Plate No, Type, and Status are required');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            console.error('Unexpected response from vehicles API PUT:', text);
+            throw parseErr;
+          }
+
+          if (result.success) {
+            this.showSuccess('Vehicle updated successfully');
+            document.getElementById('editVehicleModal').classList.remove('show');
+            this.loadVehicles();
+          } else {
+            this.showError('Failed to update vehicle: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error updating vehicle: ' + error.message);
+        }
+      }
+
+      async deleteVehicle(vehicleId) {
+        if (!confirm('Are you sure you want to delete this vehicle?')) {
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vehicle_id: vehicleId })
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            this.showSuccess('Vehicle deleted successfully');
+            this.loadVehicles();
+          } else {
+            this.showError('Failed to delete vehicle: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error deleting vehicle: ' + error.message);
+        }
+      }
+    }
+
+    let vehicleInventory;
+    document.addEventListener('DOMContentLoaded', () => {
+      vehicleInventory = new VehicleInventoryManager();
+    });
+  </script>
+</body>
+
+</html>

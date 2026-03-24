@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h1>Login System Test</h1>
+    <p>This page tests the login system with fallback authentication.</p>
+    
+    <h2>Test Credentials:</h2>
+    <ul>
+        <li><strong>Admin:</strong> admin@logistics.com / Admin123!@#</li>
+        <li><strong>Vendor:</strong> vendor@supplier.com / Vendor123!@#</li>
+    </ul>
+    
+    <button onclick="testLogin()">Test Admin Login</button>
+    <button onclick="testVendorLogin()">Test Vendor Login</button>
+    
+    <div id="result"></div>
+
+    <script src="js/login_rbac.js"></script>
+    <script src="js/login_fallback.js"></script>
+    
+    <script>
+        function testLogin() {
+            const result = fallbackAuthenticate('admin@logistics.com', 'Admin123!@#');
+            document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+        }
+        
+        function testVendorLogin() {
+            const result = fallbackAuthenticate('vendor@supplier.com', 'Vendor123!@#');
+            document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Progress Monitoring</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <style>
+    /* Basic Submenu CSS to ensure it hides/shows properly if not already in your CSS */
+    .submenu {
+      display: none;
+      flex-direction: column;
+      padding-left: 2.5rem;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .submenu.active {
+      display: flex;
+    }
+
+    .submenu-item {
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .submenu-item:hover {
+      color: var(--brand-green);
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+
+    .nav-item.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      grid-column: 1 / -1;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    .progress-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .progress-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .progress-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .progress-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .progress-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .progress-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-scheduled {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+
+    .status-in-progress {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-completed {
+      background: rgba(44, 160, 120, 0.15);
+      color: var(--brand-green);
+    }
+
+    .status-on-hold {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .status-pending-review {
+      background: rgba(139, 92, 246, 0.15);
+      color: #8b5cf6;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--brand-green);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-update {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-update:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-upload {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .btn-upload:hover {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-view {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6;
+      border: 1px solid #8b5cf6;
+    }
+
+    .btn-view:hover {
+      background: #8b5cf6;
+      color: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.3s;
+    }
+
+    .modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn-modal-cancel {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: var(--border-color);
+    }
+
+    .btn-modal-confirm {
+      background: var(--brand-green);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-confirm:hover {
+      background: #1d8659;
+    }
+
+    .file-upload {
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+
+    .file-upload:hover {
+      border-color: var(--brand-green);
+    }
+
+    .file-upload.dragover {
+      border-color: var(--brand-green);
+      background: rgba(44, 160, 120, 0.05);
+    }
+
+    .file-list {
+      margin-top: 1rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .file-remove {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-remove:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .evidence-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .evidence-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">32005</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor">
+          <i data-lucide="store"></i>
+          <span>Vendor Portal</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vendor">
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle">
+          <i data-lucide="truck"></i>
+          <span>Vehicle Reservation</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-vehicle">
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit">
+          <i data-lucide="clipboard-check"></i>
+          <span>Audit Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-audit">
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet">
+          <i data-lucide="car"></i>
+          <span>Fleet Management</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-fleet">
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document">
+          <i data-lucide="file-text"></i>
+          <span>Document Tracking</span>
+          <i data-lucide="chevron-down" class="chevron"></i>
+        </a>
+        <div class="submenu" id="submenu-document">
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">SETTINGS</span>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Configuration</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <i data-lucide="shield"></i>
+          <span>Security</span>
+        </a>
+
+        <a href="../login.html" class="nav-item">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <img src="../img/profile.png" alt="User">
+        </div>
+        <div class="user-info">
+          <span class="user-name">John Doe</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <button class="user-menu-btn">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1>Audit Progress Monitoring</h1>
+          <p>Track audit progress and upload evidence</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search audits...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">3.3 Audit Progress Monitoring</h3>
+              <p class="card-subtitle">Track audit progress and manage evidence</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="successAlert" class="alert alert-success">
+              <i data-lucide="check-circle"></i> Progress updated successfully!
+            </div>
+            <div id="errorAlert" class="alert alert-error">
+              <i data-lucide="alert-circle"></i> <span id="errorMessage">Please fill all required fields</span>
+            </div>
+
+            <div class="form-section">
+              <h4><i data-lucide="activity"></i> Active Audits</h4>
+              <table class="progress-table" id="progressTable">
+                <thead>
+                  <tr>
+                    <th>Audit ID</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Lead Auditor</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>Evidence</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="progressTableBody">
+                  <tr>
+                    <td colspan="8" style="text-align: center; color: var(--text-secondary);">No active audits found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Update Status Modal -->
+  <div id="updateStatusModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Update Audit Status</h2>
+        <button class="modal-close" id="closeUpdateModal">&times;</button>
+      </div>
+      <form id="updateStatusForm" class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label>Audit ID (Read-only)</label>
+            <input type="text" id="updateAuditId" disabled>
+          </div>
+          <div class="form-group">
+            <label>Current Status</label>
+            <input type="text" id="currentStatus" disabled>
+          </div>
+          <div class="form-group">
+            <label>New Status <span style="color: #ef4444;">*</span></label>
+            <select id="newStatus" required>
+              <option value="">Select Status</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Pending Review">Pending Review</option>
+              <option value="Completed">Completed</option>
+              <option value="On Hold">On Hold</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Progress Percentage <span style="color: #ef4444;">*</span></label>
+            <input type="number" id="progressPercentage" min="0" max="100" required placeholder="0-100">
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Status Update Notes</label>
+            <textarea id="statusNotes" placeholder="Describe the status update and any relevant details"></textarea>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" id="cancelUpdateBtn">Cancel</button>
+        <button class="btn-modal-confirm" id="saveUpdateBtn">Update Status</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Evidence Modal -->
+  <div id="uploadEvidenceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Upload Evidence</h2>
+        <button class="modal-close" id="closeUploadModal">&times;</button>
+      </div>
+      <form id="uploadEvidenceForm" class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label>Audit ID (Read-only)</label>
+            <input type="text" id="uploadAuditId" disabled>
+          </div>
+          <div class="form-group">
+            <label>Evidence Type <span style="color: #ef4444;">*</span></label>
+            <select id="evidenceType" required>
+              <option value="">Select Evidence Type</option>
+              <option value="Document">Document</option>
+              <option value="Photo">Photo</option>
+              <option value="Video">Video</option>
+              <option value="Audio">Audio Recording</option>
+              <option value="Spreadsheet">Spreadsheet</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>File Upload <span style="color: #ef4444;">*</span></label>
+            <div class="file-upload" id="fileUploadArea">
+              <i data-lucide="upload-cloud" style="font-size: 2rem; color: var(--brand-green); margin-bottom: 0.5rem;"></i>
+              <p style="margin: 0; color: var(--text-primary); font-weight: 500;">Drop files here or click to browse</p>
+              <p style="margin: 0.5rem 0 0 0; color: var(--text-secondary); font-size: 0.85rem;">Supported formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, MP4, MP3</p>
+              <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.mp3">
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Description</label>
+            <textarea id="evidenceDescription" placeholder="Describe the evidence being uploaded"></textarea>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" id="cancelUploadBtn">Cancel</button>
+        <button class="btn-modal-confirm" id="uploadBtn">Upload Evidence</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/dashboard.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Audit Progress Management System
+    class AuditProgress {
+      constructor() {
+        this.audits = [];
+        this.apiUrl = '../api/audit-progress.php';
+        this.uploadedFiles = [];
+        this.loadAudits();
+        this.setupFileUpload();
+      }
+
+      // Load audits from API
+      async loadAudits() {
+        try {
+          console.log('Loading audit progress from:', this.apiUrl);
+          const response = await fetch(this.apiUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log('API Response:', result);
+
+          if (result.success) {
+            this.audits = result.data || [];
+            console.log('Loaded audits:', this.audits.length);
+          } else {
+            this.showError('Failed to load audit progress: ' + result.message);
+          }
+          this.displayAudits();
+        } catch (error) {
+          console.error('Load audit progress error:', error);
+          this.showError('Error loading audit progress: ' + error.message);
+        }
+      }
+
+      // Show success message
+      showSuccess(message = 'Progress updated successfully') {
+        const alert = document.getElementById('successAlert');
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 4000);
+      }
+
+      // Show error message
+      showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 4000);
+      }
+
+      // Display audits in table
+      displayAudits() {
+        const tbody = document.getElementById('progressTableBody');
+
+        if (this.audits.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-secondary);">No active audits found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = this.audits.map(audit => `
+          <tr>
+            <td><strong>${audit.audit_id}</strong></td>
+            <td>${audit.audit_title}</td>
+            <td>${audit.audit_type}</td>
+            <td>${audit.lead_auditor}</td>
+            <td>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${audit.progress_percentage || 0}%"></div>
+              </div>
+              <small style="color: var(--text-secondary);">${audit.progress_percentage || 0}%</small>
+            </td>
+            <td>
+              <span class="status-badge status-${audit.status.toLowerCase().replace(' ', '-')}">
+                ${audit.status}
+              </span>
+            </td>
+            <td>
+              <div class="evidence-list">
+                ${audit.evidence_count ? `<i data-lucide="paperclip"></i> ${audit.evidence_count} files` : 'No evidence'}
+              </div>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-update" data-audit-id="${audit.audit_id}" onclick="auditProgress.showUpdateStatus('${audit.audit_id}')">
+                  <i data-lucide="refresh-cw" class="lucide-icon"></i> Update Status
+                </button>
+                <button class="btn-action btn-upload" data-audit-id="${audit.audit_id}" onclick="auditProgress.showUploadEvidence('${audit.audit_id}')">
+                  <i data-lucide="upload" class="lucide-icon"></i> Upload Evidence
+                </button>
+                ${audit.evidence_count > 0 ? `
+                  <button class="btn-action btn-view" data-audit-id="${audit.audit_id}" onclick="auditProgress.viewEvidence('${audit.audit_id}')">
+                    <i data-lucide="eye" class="lucide-icon"></i> View
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        lucide.createIcons();
+      }
+
+      // Show update status modal
+      showUpdateStatus(auditId) {
+        const audit = this.audits.find(a => a.audit_id === auditId);
+        if (!audit) {
+          this.showError('Audit not found');
+          return;
+        }
+
+        document.getElementById('updateAuditId').value = audit.audit_id;
+        document.getElementById('currentStatus').value = audit.status;
+        document.getElementById('newStatus').value = audit.status;
+        document.getElementById('progressPercentage').value = audit.progress_percentage || 0;
+        document.getElementById('statusNotes').value = '';
+
+        this.currentUpdateAuditId = auditId;
+        document.getElementById('updateStatusModal').classList.add('show');
+      }
+
+      // Show upload evidence modal
+      showUploadEvidence(auditId) {
+        const audit = this.audits.find(a => a.audit_id === auditId);
+        if (!audit) {
+          this.showError('Audit not found');
+          return;
+        }
+
+        document.getElementById('uploadAuditId').value = audit.audit_id;
+        document.getElementById('evidenceType').value = '';
+        document.getElementById('evidenceDescription').value = '';
+        this.clearFileList();
+
+        this.currentUploadAuditId = auditId;
+        document.getElementById('uploadEvidenceModal').classList.add('show');
+      }
+
+      // View evidence
+      viewEvidence(auditId) {
+        // This would open a new page or modal showing evidence files
+        console.log('Viewing evidence for audit:', auditId);
+        this.showSuccess('Opening evidence viewer...');
+      }
+
+      // Save status update
+      async saveStatusUpdate() {
+        const formData = {
+          audit_id: document.getElementById('updateAuditId').value,
+          new_status: document.getElementById('newStatus').value,
+          progress_percentage: document.getElementById('progressPercentage').value,
+          status_notes: document.getElementById('statusNotes').value
+        };
+
+        if (!formData.new_status || !formData.progress_percentage) {
+          this.showError('Please fill all required fields');
+          return;
+        }
+
+        try {
+          const response = await fetch(this.apiUrl + '/update-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Audit status updated successfully');
+            document.getElementById('updateStatusModal').classList.remove('show');
+            this.loadAudits();
+          } else {
+            this.showError('Failed to update status: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error updating status: ' + error.message);
+        }
+      }
+
+      // Setup file upload
+      setupFileUpload() {
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+
+        fileUploadArea.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', () => {
+          fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', (e) => {
+          e.preventDefault();
+          fileUploadArea.classList.remove('dragover');
+          this.handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+          this.handleFiles(e.target.files);
+        });
+      }
+
+      // Handle file selection
+      handleFiles(files) {
+        Array.from(files).forEach(file => {
+          if (this.validateFile(file)) {
+            this.uploadedFiles.push(file);
+            this.displayFile(file);
+          }
+        });
+      }
+
+      // Validate file
+      validateFile(file) {
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'video/mp4', 'audio/mpeg'];
+        
+        if (!allowedTypes.includes(file.type)) {
+          this.showError('File type not supported: ' + file.type);
+          return false;
+        }
+
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+          this.showError('File size too large. Maximum size is 10MB');
+          return false;
+        }
+
+        return true;
+      }
+
+      // Display file in list
+      displayFile(file) {
+        const fileList = document.getElementById('fileList');
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+          <div class="file-info">
+            <i data-lucide="file"></i>
+            <span>${file.name} (${this.formatFileSize(file.size)})</span>
+          </div>
+          <button type="button" class="file-remove" onclick="auditProgress.removeFile('${file.name}')">Remove</button>
+        `;
+        fileList.appendChild(fileItem);
+        lucide.createIcons();
+      }
+
+      // Remove file
+      removeFile(fileName) {
+        this.uploadedFiles = this.uploadedFiles.filter(file => file.name !== fileName);
+        this.refreshFileList();
+      }
+
+      // Refresh file list display
+      refreshFileList() {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        this.uploadedFiles.forEach(file => this.displayFile(file));
+      }
+
+      // Clear file list
+      clearFileList() {
+        this.uploadedFiles = [];
+        document.getElementById('fileList').innerHTML = '';
+      }
+
+      // Format file size
+      formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // Upload evidence
+      async uploadEvidence() {
+        if (this.uploadedFiles.length === 0) {
+          this.showError('Please select at least one file to upload');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('audit_id', document.getElementById('uploadAuditId').value);
+        formData.append('evidence_type', document.getElementById('evidenceType').value);
+        formData.append('description', document.getElementById('evidenceDescription').value);
+
+        this.uploadedFiles.forEach(file => {
+          formData.append('files[]', file);
+        });
+
+        try {
+          const response = await fetch(this.apiUrl + '/upload-evidence', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.showSuccess('Evidence uploaded successfully');
+            document.getElementById('uploadEvidenceModal').classList.remove('show');
+            this.clearFileList();
+            this.loadAudits();
+          } else {
+            this.showError('Failed to upload evidence: ' + result.message);
+          }
+        } catch (error) {
+          this.showError('Error uploading evidence: ' + error.message);
+        }
+      }
+
+      // Setup modal event listeners
+      setupModalListeners() {
+        // Update status modal
+        document.getElementById('closeUpdateModal').addEventListener('click', () => {
+          document.getElementById('updateStatusModal').classList.remove('show');
+        });
+
+        document.getElementById('cancelUpdateBtn').addEventListener('click', () => {
+          document.getElementById('updateStatusModal').classList.remove('show');
+        });
+
+        document.getElementById('saveUpdateBtn').addEventListener('click', () => {
+          this.saveStatusUpdate();
+        });
+
+        // Upload evidence modal
+        document.getElementById('closeUploadModal').addEventListener('click', () => {
+          document.getElementById('uploadEvidenceModal').classList.remove('show');
+        });
+
+        document.getElementById('cancelUploadBtn').addEventListener('click', () => {
+          document.getElementById('uploadEvidenceModal').classList.remove('show');
+        });
+
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+          this.uploadEvidence();
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+          const updateModal = document.getElementById('updateStatusModal');
+          const uploadModal = document.getElementById('uploadEvidenceModal');
+          if (e.target === updateModal) {
+            updateModal.classList.remove('show');
+          }
+          if (e.target === uploadModal) {
+            uploadModal.classList.remove('show');
+          }
+        });
+      }
+    }
+
+    // Initialize on page load
+    let auditProgress;
+    document.addEventListener('DOMContentLoaded', () => {
+      auditProgress = new AuditProgress();
+      auditProgress.setupModalListeners();
+    });
+  </script>
+</body>
+
+</html>
+  <script src="../js/dashboard.js"></script><script>lucide.createIcons();</script>
+</body>
+</html>

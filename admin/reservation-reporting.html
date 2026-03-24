@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Reservation Usage Reporting</title>
+
+  <link rel="stylesheet" href="../css/dashboard.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .submenu {
+
+      display: none;
+
+      flex-direction: column;
+
+      padding-left: 2.5rem;
+
+      background: rgba(0, 0, 0, 0.02);
+
+    }
+
+
+
+    .submenu.active {
+
+      display: flex;
+
+    }
+
+
+
+    .submenu-item {
+
+      padding: 0.75rem 1rem;
+
+      color: var(--text-secondary);
+
+      text-decoration: none;
+
+      font-size: 0.9rem;
+
+      transition: color 0.2s;
+
+    }
+
+
+
+    .submenu-item:hover {
+
+      color: var(--brand-green);
+
+    }
+
+
+
+    .chevron {
+
+      margin-left: auto;
+
+      transition: transform 0.3s;
+
+    }
+
+
+
+    .nav-item.active .chevron {
+
+      transform: rotate(180deg);
+
+    }
+  </style>
+
+</head>
+
+
+
+<body>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i data-lucide="sun"></i><i
+      data-lucide="moon"></i></button>
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+
+      <div class="logo-container">
+
+        <div class="logo-wrapper"><img src="../img/logo.png" alt="Logo" class="logo"></div>
+
+        <div class="logo-text">
+
+          <h2 class="app-name">Microfinance</h2><span class="app-tagline">32005</span>
+
+        </div>
+
+      </div>
+
+      <button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="panel-left-close"></i></button>
+
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section"><span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+
+        <a href="#" class="nav-item has-submenu" data-module="vendor"><i data-lucide="store"></i><span>Vendor
+
+            Portal</span><i data-lucide="chevron-down" class="chevron"></i></a>
+
+        <div class="submenu" id="submenu-vendor">
+
+          <a href="vendor-registration.html" class="submenu-item">1.1 Vendor Registration Administration</a>
+
+          <a href="vendor-profile.html" class="submenu-item">1.2 Vendor Profile Management</a>
+
+          <a href="vendor-accreditation.html" class="submenu-item">1.3 Vendor Accreditation & Compliance Review</a>
+
+          <a href="vendor-contracts.html" class="submenu-item">1.4 Contract & Document Oversight</a>
+
+          <a href="vendor-performance.html" class="submenu-item">1.5 Vendor Performance Monitoring</a>
+
+          <a href="vendor-reports.html" class="submenu-item">1.6 Vendor Reports & Analytics</a>
+
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="vehicle"><i data-lucide="truck"></i><span>Vehicle
+
+            Reservation</span><i data-lucide="chevron-down" class="chevron"></i></a>
+
+        <div class="submenu" id="submenu-vehicle">
+
+          <a href="vehicle-inventory.html" class="submenu-item">2.1 Vehicle Inventory Administration</a>
+
+          <a href="reservation-request.html" class="submenu-item">2.2 Reservation Request Review & Approval</a>
+
+          <a href="driver-vehicle-assignment.html" class="submenu-item">2.3 Driver & Vehicle Assignment</a>
+
+          <a href="reservation-schedule.html" class="submenu-item">2.4 Reservation Schedule Management</a>
+
+          <a href="trip-log.html" class="submenu-item">2.5 Trip Log Monitoring</a>
+
+          <a href="reservation-reporting.html" class="submenu-item">2.6 Reservation Usage Reporting</a>
+
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="audit"><i data-lucide="clipboard-check"></i><span>Audit
+
+            Management</span><i data-lucide="chevron-down" class="chevron"></i></a>
+
+        <div class="submenu" id="submenu-audit">
+
+          <a href="audit-schedule.html" class="submenu-item">3.1 Audit Schedule Administration</a>
+
+          <a href="audit-checklist.html" class="submenu-item">3.2 Audit Checklist Configuration</a>
+
+          <a href="audit-progress.html" class="submenu-item">3.3 Audit Progress Monitoring</a>
+
+          <a href="audit-findings.html" class="submenu-item">3.4 Findings & Observations Review</a>
+
+          <a href="corrective-action.html" class="submenu-item">3.5 Corrective Action Assignment</a>
+
+          <a href="audit-reporting.html" class="submenu-item">3.6 Audit Reporting</a>
+
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="fleet"><i data-lucide="car"></i><span>Fleet
+
+            Management</span><i data-lucide="chevron-down" class="chevron"></i></a>
+
+        <div class="submenu" id="submenu-fleet">
+
+          <a href="vehicle-registration.html" class="submenu-item">4.1 Vehicle Registration & Data Administration</a>
+
+          <a href="maintenance-schedule.html" class="submenu-item">4.2 Maintenance Schedule Oversight</a>
+
+          <a href="fuel-usage.html" class="submenu-item">4.3 Fuel & Usage Monitoring</a>
+
+          <a href="service-repair.html" class="submenu-item">4.4 Service & Repair History Administration</a>
+
+          <a href="insurance-renewal.html" class="submenu-item">4.5 Insurance & Renewal Tracking</a>
+
+          <a href="fleet-reporting.html" class="submenu-item">4.6 Fleet Performance Reporting</a>
+
+        </div>
+
+        <a href="#" class="nav-item has-submenu" data-module="document"><i data-lucide="file-text"></i><span>Document
+
+            Tracking</span><i data-lucide="chevron-down" class="chevron"></i></a>
+
+        <div class="submenu" id="submenu-document">
+
+          <a href="document-intake.html" class="submenu-item">5.1 Document Intake & Classification</a>
+
+          <a href="document-workflow.html" class="submenu-item">5.2 Workflow & Routing Administration</a>
+
+          <a href="document-access.html" class="submenu-item">5.3 Access Control & Permission Management</a>
+
+          <a href="document-tracking.html" class="submenu-item">5.4 Document Status & Version Tracking</a>
+
+          <a href="document-archive.html" class="submenu-item">5.5 Document Archive Oversight</a>
+
+          <a href="document-activity.html" class="submenu-item">5.6 Document Activity Reporting</a>
+
+        </div>
+
+      </div>
+
+      <div class="nav-section"><span class="nav-section-title">SETTINGS</span>
+
+        <a href="#" class="nav-item"><i data-lucide="settings"></i><span>Configuration</span></a>
+
+        <a href="#" class="nav-item"><i data-lucide="shield"></i><span>Security</span></a>
+
+        <a href="../login.html" class="nav-item"><i data-lucide="log-out"></i><span>Logout</span></a>
+
+      </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+      <div class="user-profile">
+
+        <div class="user-avatar"><img src="../img/profile.png" alt="User"></div>
+
+        <div class="user-info"><span class="user-name">John Doe</span><span class="user-role">Administrator</span></div>
+
+        <button class="user-menu-btn"><i data-lucide="more-vertical"></i></button>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+  <main class="main-content">
+
+    <header class="page-header">
+
+      <div class="header-left">
+
+        <button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
+
+        <div class="header-title">
+
+          <h1>Reservation Usage Reporting</h1>
+
+          <p>Generate reservation usage reports</p>
+
+        </div>
+
+      </div>
+
+      <div class="header-right">
+
+        <div class="search-box"><i data-lucide="search"></i><input type="search" placeholder="Search..."></div>
+
+        <button class="icon-btn"><i data-lucide="bell"></i></button>
+
+      </div>
+
+    </header>
+
+    <div class="content-wrapper">
+
+      <div class="content-grid">
+
+        <div class="content-card" style="grid-column: 1 / -1;">
+
+          <div class="card-header">
+
+            <div>
+
+              <h3 class="card-title">Reservation Usage Reporting</h3>
+
+              <p class="card-subtitle">Generate and view usage reports</p>
+
+            </div>
+
+          </div>
+
+          <div class="card-body">
+
+            <div id="successAlert" class="alert alert-success"></div>
+
+            <div id="errorAlert" class="alert alert-error"><span id="errorMessage"></span></div>
+
+            <div class="report-summary" style="display:flex;gap:1rem;flex-wrap:wrap;">
+
+              <div class="summary-card" id="vehicleUsageCard">Top Vehicles<br><strong>0 items</strong></div>
+
+              <div class="summary-card" id="driverPerformanceCard">Top Drivers<br><strong>0 items</strong></div>
+
+              <div class="summary-card" id="fuelTrendsCard">Fuel Trends<br><strong>0 records</strong></div>
+
+            </div>
+
+            <div class="report-controls" style="margin-top:1rem;">
+
+              <select id="reportType">
+
+                <option value="vehicle_usage">Vehicle Usage</option>
+
+                <option value="driver_performance">Driver Performance</option>
+
+                <option value="fuel_trends">Fuel Trends</option>
+
+              </select>
+
+              <button class="btn-action" id="loadReportBtn">Load Report</button>
+
+            </div>
+
+            <div class="report-table" style="margin-top:1rem;">
+
+              <table id="reportTable">
+
+                <thead></thead>
+
+                <tbody id="reportTableBody"></tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../js/dashboard.js"></script>
+
+  <style>
+    .alert {
+
+      padding: 1rem;
+
+      border-radius: 6px;
+
+      margin-bottom: 1rem;
+
+    }
+
+
+
+    .alert-success {
+
+      background: rgba(44, 160, 120, 0.1);
+
+      color: var(--brand-green);
+
+      border: 1px solid var(--brand-green);
+
+    }
+
+
+
+    .alert-error {
+
+      background: rgba(239, 68, 68, 0.1);
+
+      color: #ef4444;
+
+      border: 1px solid #ef4444;
+
+    }
+
+
+
+    .summary-card {
+
+      flex: 1;
+
+      background: var(--bg-secondary);
+
+      padding: 1rem;
+
+      border-radius: 6px;
+
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      text-align: center;
+
+    }
+
+
+
+    .report-controls {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 1rem;
+
+    }
+
+
+
+    .report-controls select,
+
+    .report-controls button {
+
+      padding: 0.6rem 1rem;
+
+      border: 1px solid var(--border-color);
+
+      border-radius: 6px;
+
+      background: var(--bg-primary);
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    .report-table table {
+
+      width: 100%;
+
+      border-collapse: collapse;
+
+    }
+
+
+
+    .report-table th,
+
+    .report-table td {
+
+      padding: 0.75rem;
+
+      border: 1px solid var(--border-color);
+
+      text-align: left;
+
+    }
+  </style>
+
+  <script>
+
+    lucide.createIcons();
+
+    class ReportManager {
+
+      constructor() {
+
+        this.apiUrl = '../api/reporting.php';
+
+        this.init();
+
+      }
+
+      init() {
+
+        document.getElementById('loadReportBtn').addEventListener('click', () => this.loadReport());
+
+        this.loadSummary();
+
+      }
+
+      async loadSummary() {
+
+        try {
+
+          const vehicle = await this.fetchReport('vehicle_usage');
+
+          const driver = await this.fetchReport('driver_performance');
+
+          const fuel = await this.fetchReport('fuel_trends');
+
+          this.renderCards(vehicle.data, driver.data, fuel.data);
+
+        } catch (err) {
+
+          console.warn(err);
+
+          this.showError('Failed to load summary');
+
+        }
+
+      }
+
+      async loadReport() {
+
+        const type = document.getElementById('reportType').value;
+
+        try {
+
+          const res = await this.fetchReport(type);
+
+          if (res.success) this.renderTable(res.data, type);
+
+          else this.showError(res.message);
+
+        } catch (err) {
+
+          this.showError(err.message);
+
+        }
+
+      }
+
+      async fetchReport(action) {
+
+        const res = await fetch(this.apiUrl + '?action=' + action);
+
+        return await res.json();
+
+      }
+
+      renderCards(vehicleData, driverData, fuelData) {
+
+        document.getElementById('vehicleUsageCard').innerHTML = 'Top Vehicles<br><strong>' + (vehicleData ? vehicleData.length : 0) + ' items</strong>';
+
+        document.getElementById('driverPerformanceCard').innerHTML = 'Top Drivers<br><strong>' + (driverData ? driverData.length : 0) + ' items</strong>';
+
+        document.getElementById('fuelTrendsCard').innerHTML = 'Fuel Trends<br><strong>' + (fuelData ? fuelData.length : 0) + ' records</strong>';
+
+      }
+
+      renderTable(data, type) {
+
+        const tbody = document.getElementById('reportTableBody');
+
+        const thead = document.querySelector('#reportTable thead');
+
+        if (!data || !data.length) {
+
+          tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:0.75rem;">No data</td></tr>';
+
+          thead.innerHTML = '';
+
+          return;
+
+        }
+
+        if (type === 'vehicle_usage') {
+
+          thead.innerHTML = '<tr><th>Vehicle ID</th><th>Usage Count</th></tr>';
+
+          tbody.innerHTML = data.map(r => `<tr><td>${r.vehicle_id}</td><td>${r.usage_count}</td></tr>`).join('');
+
+        } else if (type === 'driver_performance') {
+
+          thead.innerHTML = '<tr><th>Driver ID</th><th>Trip Count</th></tr>';
+
+          tbody.innerHTML = data.map(r => `<tr><td>${r.driver_id}</td><td>${r.trip_count}</td></tr>`).join('');
+
+        } else if (type === 'fuel_trends') {
+
+          thead.innerHTML = '<tr><th>Month</th><th>Total Liters</th></tr>';
+
+          tbody.innerHTML = data.map(r => `<tr><td>${r.month}</td><td>${r.total_liters}</td></tr>`).join('');
+
+        }
+
+        lucide.createIcons();
+
+      }
+
+      showSuccess(msg) { const a = document.getElementById('successAlert'); a.innerHTML = '<i data-lucide="check-circle"></i> ' + msg; a.classList.add('show'); setTimeout(() => a.classList.remove('show'), 3000); }
+
+      showError(msg) { const a = document.getElementById('errorAlert'); document.getElementById('errorMessage').textContent = msg; a.classList.add('show'); setTimeout(() => a.classList.remove('show'), 3000); }
+
+    }
+
+    let reportMgr;
+
+    window.addEventListener('DOMContentLoaded', () => { reportMgr = new ReportManager(); });
+
+  </script>
+
+</body>
+
+
+
+</html>

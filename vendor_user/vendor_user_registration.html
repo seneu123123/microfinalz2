@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Registration</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="../img/logo.png">
+  <style>
+    /* Vendor Registration Form Styles */
+    .form-section {
+      margin-bottom: 2rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-section h3 {
+      margin: 0 0 1rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand-green);
+      box-shadow: 0 0 0 3px rgba(44, 160, 120, 0.1);
+    }
+
+    .form-group input:disabled {
+      background: var(--bg-secondary);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .required {
+      color: #ef4444;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--brand-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d8659;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 160, 120, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .status-message {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .status-message.success {
+      background: rgba(44, 160, 120, 0.1);
+      color: var(--brand-green);
+      border: 1px solid var(--brand-green);
+    }
+
+    .status-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-top: 2px solid var(--brand-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i data-lucide="sun" class="sun-icon"></i>
+    <i data-lucide="moon" class="moon-icon"></i>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-wrapper">
+          <img src="../img/logo.png" alt="Logo" class="logo">
+        </div>
+        <div class="logo-text">
+          <h2 class="app-name">Microfinance</h2>
+          <span class="app-tagline">3205</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">MAIN MENU</span>
+
+        <a href="dashboard_user.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="vendor_user_registration.html" class="nav-item active">
+          <i data-lucide="user-plus"></i>
+          <span>Vendor Registration</span>
+        </a>
+
+        <a href="../login.html" class="nav-item">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-title">
+          <h1>Vendor Registration</h1>
+          <p>Register your business to become a vendor partner</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="search" placeholder="Search...">
+        </div>
+        <button class="icon-btn">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="content-grid">
+        <div class="content-card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Vendor Registration</h3>
+              <p class="card-subtitle">Register your business to become a vendor partner</p>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="status-message" id="statusMessage"></div>
+            <div class="loading" id="loading">
+              <div class="spinner"></div>
+              <p>Processing your registration...</p>
+            </div>
+
+            <form id="vendorRegistrationForm">
+              <!-- Vendor ID (Hidden Auto-Generated) -->
+              <input type="hidden" id="vendorId" name="vendorId">
+
+              <!-- Basic Information -->
+              <div class="form-section">
+                <h3><i data-lucide="building"></i> Basic Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Company Name <span class="required">*</span></label>
+                    <input type="text" id="companyName" name="companyName"
+                      placeholder="Official registered company name" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Services/Product <span class="required">*</span></label>
+                    <input type="text" id="businessType" name="businessType"
+                      placeholder="Enter services or products you provide" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Contact Number <span class="required">*</span></label>
+                    <input type="tel" id="contactNumber" name="contactNumber" placeholder="Phone number" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="Email for communications" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Business Details -->
+              <div class="form-section">
+                <h3><i data-lucide="briefcase"></i> Business Details</h3>
+                <div class="form-grid">
+                  <div class="form-group full-width">
+                    <label>Business Details <span class="required">*</span></label>
+                    <textarea id="businessDetails" name="businessDetails"
+                      placeholder="Describe your business operations, services, and expertise" required></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Business Information -->
+              <div class="form-section">
+                <h3><i data-lucide="briefcase"></i> Business Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Registration No. <span class="required">*</span></label>
+                    <input type="text" id="registrationNo" name="registrationNo"
+                      placeholder="Business registration number" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Contact Person <span class="required">*</span></label>
+                    <input type="text" id="contactPerson" name="contactPerson" placeholder="Primary contact person"
+                      required>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Address <span class="required">*</span></label>
+                    <textarea id="address" name="address" placeholder="Complete business address" required></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Banking Information -->
+              <div class="form-section">
+                <h3><i data-lucide="credit-card"></i> Banking Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Bank Name <span class="required">*</span></label>
+                    <input type="text" id="bankName" name="bankName" placeholder="Bank name" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Bank Account No <span class="required">*</span></label>
+                    <input type="text" id="bankAccount" name="bankAccount" placeholder="Bank account number" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Document Uploads -->
+              <div class="form-section">
+                <h3><i data-lucide="file-text"></i> Required Documents</h3>
+                <div class="form-grid">
+                  <div class="form-group full-width">
+                    <label>Business Permit <span class="required">*</span></label>
+                    <input type="file" id="businessPermit" name="businessPermit" accept=".pdf,.jpg,.jpeg,.png" required>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                      Accepted formats: PDF, JPG, PNG (Max 5MB)
+                    </small>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Company Registration <span class="required">*</span></label>
+                    <input type="file" id="companyRegistration" name="companyRegistration" accept=".pdf,.jpg,.jpeg,.png"
+                      required>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                      Accepted formats: PDF, JPG, PNG (Max 5MB)
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Buttons -->
+              <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                  <i data-lucide="refresh-cw"></i>
+                  Reset Form
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i data-lucide="send"></i>
+                  Submit Registration
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/dashboard.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Form submission handler
+    document.getElementById('vendorRegistrationForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const loading = document.getElementById('loading');
+      const statusMessage = document.getElementById('statusMessage');
+
+      // Show loading
+      loading.style.display = 'block';
+      statusMessage.style.display = 'none';
+
+      // Collect form data
+      const formData = {
+        vendor_name: document.getElementById('companyName').value,
+        business_type: document.getElementById('businessType').value,
+        business_details: document.getElementById('businessDetails').value,
+        contact_number: document.getElementById('contactNumber').value,
+        email: document.getElementById('email').value,
+        registration_no: document.getElementById('registrationNo').value,
+        contact_person: document.getElementById('contactPerson').value,
+        address: document.getElementById('address').value,
+        bank_name: document.getElementById('bankName').value,
+        bank_account: document.getElementById('bankAccount').value
+      };
+
+      // Get file inputs
+      const businessPermitFile = document.getElementById('businessPermit').files[0];
+      const companyRegistrationFile = document.getElementById('companyRegistration').files[0];
+
+      // Validate files
+      if (!businessPermitFile || !companyRegistrationFile) {
+        loading.style.display = 'none';
+        statusMessage.className = 'status-message error';
+        statusMessage.innerHTML = `
+          <strong>Validation Error</strong><br>
+          Please upload both Business Permit and Company Registration documents.
+        `;
+        statusMessage.style.display = 'block';
+        return;
+      }
+
+      // Validate file sizes (5MB max)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (businessPermitFile.size > maxSize || companyRegistrationFile.size > maxSize) {
+        loading.style.display = 'none';
+        statusMessage.className = 'status-message error';
+        statusMessage.innerHTML = `
+          <strong>File Size Error</strong><br>
+          File size must be less than 5MB.
+        `;
+        statusMessage.style.display = 'block';
+        return;
+      }
+
+      try {
+        // Create FormData for file upload
+        const uploadData = new FormData();
+        uploadData.append('vendor_name', formData.vendor_name);
+        uploadData.append('business_type', formData.business_type);
+        uploadData.append('business_details', formData.business_details);
+        uploadData.append('contact_number', formData.contact_number);
+        uploadData.append('email', formData.email);
+        uploadData.append('registration_no', formData.registration_no);
+        uploadData.append('contact_person', formData.contact_person);
+        uploadData.append('address', formData.address);
+        uploadData.append('bank_name', formData.bank_name);
+        uploadData.append('bank_account', formData.bank_account);
+        uploadData.append('business_permit', businessPermitFile);
+        uploadData.append('company_registration', companyRegistrationFile);
+
+        // Send data to admin vendor registration API
+        const response = await fetch('../api/vendors.php', {
+          method: 'POST',
+          body: uploadData
+          // Don't set Content-Type header - browser will set it with boundary for FormData
+        });
+
+        const result = await response.json();
+
+        loading.style.display = 'none';
+
+        if (result.success) {
+          statusMessage.className = 'status-message success';
+          statusMessage.innerHTML = `
+            <strong>Registration Submitted Successfully!</strong><br>
+            Your vendor ID is: <strong>${result.data?.vendor_id || 'Pending'}</strong><br>
+            We will review your application and contact you soon.
+          `;
+          statusMessage.style.display = 'block';
+
+          // Reset form after successful submission
+          setTimeout(() => {
+            resetForm();
+            statusMessage.style.display = 'none';
+          }, 5000);
+        } else {
+          throw new Error(result.message || 'Registration failed');
+        }
+      } catch (error) {
+        loading.style.display = 'none';
+        statusMessage.className = 'status-message error';
+        statusMessage.innerHTML = `
+          <strong>Registration Failed</strong><br>
+          ${error.message}<br>
+          Please try again or contact support.
+        `;
+        statusMessage.style.display = 'block';
+      }
+    });
+
+    // Reset form function
+    function resetForm() {
+      document.getElementById('vendorRegistrationForm').reset();
+      // Clear file inputs manually
+      document.getElementById('businessPermit').value = '';
+      document.getElementById('companyRegistration').value = '';
+      // Hide status message
+      document.getElementById('statusMessage').style.display = 'none';
+      generateVendorId();
+    }
+
+    // Generate vendor ID on page load (for display purposes)
+    function generateVendorId() {
+      const nextId = Math.floor(Math.random() * 90000) + 10000;
+      document.getElementById('vendorId').value = `VND-${nextId}`;
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', function () {
+      generateVendorId();
+    });
+  </script>
+</body>
+
+</html>

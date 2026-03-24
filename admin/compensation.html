@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compensation Planning</title>
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../img/logo.png" />
+  </head>
+  <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i data-lucide="sun" class="sun-icon"></i>
+      <i data-lucide="moon" class="moon-icon"></i>
+    </button>
+
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="header-title">
+            <h1>Compensation Planning</h1>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="search" placeholder="Search..." />
+          </div>
+          <button class="icon-btn">
+            <i data-lucide="bell"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="content-card">
+          <div class="card-header">
+            <h3 class="card-title">Compensation Overview</h3>
+          </div>
+          <div class="card-body">
+            <p>Manage employee salaries, bonuses, and benefits here.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../js/dashboard.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
