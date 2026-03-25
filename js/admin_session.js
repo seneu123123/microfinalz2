@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!session) {
         // No session found, redirect to login
-        window.location.href = '../login.html';
+        window.location.href = '../login.php';
         return;
     }
     
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmButtonColor: '#2ca078',
                     confirmButtonText: 'Go to Login'
                 }).then(() => {
-                    window.location.href = '../login.html';
+                    window.location.href = '../login.php';
                 });
                 return;
             }
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmButtonColor: '#2ca078',
                     confirmButtonText: 'Go to Login'
                 }).then(() => {
-                    window.location.href = '../login.html';
+                    window.location.href = '../login.php';
                 });
                 return;
             }
@@ -61,6 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Session validation error:', error);
             clearSession();
-            window.location.href = '../login.html';
+            window.location.href = '../login.php';
         });
 });

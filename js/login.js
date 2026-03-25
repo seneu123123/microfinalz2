@@ -30,7 +30,7 @@ loginForm.classList.add("active")
 }
 
 // Reinitialize Lucide icons after form switch
-setTimeout(() => {fix 
+setTimeout(() => {
 window.lucide.createIcons()
 }, 100)
 }
@@ -273,7 +273,6 @@ function generateOtpInputs() {
         input.className = 'otp-input';
         input.dataset.index = i;
         input.inputMode = 'numeric';
-        input.pattern = '\d*';
         
         // Handle input
         input.addEventListener('input', (e) => {

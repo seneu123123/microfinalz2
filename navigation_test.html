@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Navigation Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .debug-panel {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .debug-log {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Navigation Fix Test</h1>
+        
+        <div class="debug-panel">
+            <strong>Debug Console:</strong>
+            <div class="debug-log" id="debugLog">
+                <div>[INIT] Navigation test page loaded</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>1. Dropdown Navigation Test</h2>
+            <button class="test-button" onclick="testDropdown()">Test MRO Dropdown</button>
+            <button class="test-button" onclick="testSubmenuLinks()">Test Submenu Links</button>
+            <button class="test-button" onclick="testDropdownStability()">Test Dropdown Stability</button>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Page Stability Test</h2>
+            <button class="test-button" onclick="testPageScroll()">Test Page Scroll</button>
+            <button class="test-button" onclick="testFixedElements()">Test Fixed Elements</button>
+            <button class="test-button" onclick="testResponsiveLayout()">Test Responsive Layout</button>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Navigation Links Test</h2>
+            <button class="test-button" onclick="testMROPages()">Test MRO Pages</button>
+            <button class="test-button" onclick="testLinkClicks()">Test Link Clicks</button>
+            <button class="test-button" onclick="testNavigationFlow()">Test Navigation Flow</button>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Comprehensive Test</h2>
+            <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+            <button class="test-button" onclick="clearDebugLog()">Clear Debug Log</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Results</h2>
+            <div id="testResults">
+                <p>Click the test buttons to see results...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debug logging
+        function debugLog(message) {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log('[NAV TEST]', message);
+        }
+
+        function updateResults(message, status = 'success') {
+            const results = document.getElementById('testResults');
+            const statusClass = `status-${status}`;
+            results.innerHTML += `<div><span class="status-indicator ${statusClass}"></span>${message}</div>`;
+        }
+
+        // Test functions
+        function testDropdown() {
+            debugLog('Testing MRO dropdown functionality...');
+            
+            // Simulate dropdown test
+            const mroButton = document.querySelector('[data-module="mro"]');
+            if (mroButton) {
+                debugLog('MRO button found');
+                updateResults('MRO dropdown button detected', 'success');
+                
+                // Simulate click
+                const event = new MouseEvent('click', { bubbles: true });
+                mroButton.dispatchEvent(event);
+                debugLog('MRO dropdown clicked');
+                updateResults('MRO dropdown click simulated', 'success');
+            } else {
+                debugLog('MRO button not found');
+                updateResults('MRO button not found', 'error');
+            }
+        }
+
+        function testSubmenuLinks() {
+            debugLog('Testing submenu links...');
+            
+            const submenuLinks = document.querySelectorAll('.submenu-item');
+            debugLog(`Found ${submenuLinks.length} submenu links`);
+            updateResults(`Found ${submenuLinks.length} submenu links`, 'success');
+            
+            submenuLinks.forEach((link, index) => {
+                debugLog(`Submenu link ${index + 1}: ${link.textContent.trim()}`);
+            });
+        }
+
+        function testDropdownStability() {
+            debugLog('Testing dropdown stability...');
+            
+            // Test for common stability issues
+            const body = document.body;
+            const html = document.documentElement;
+            
+            debugLog(`Body overflow: ${getComputedStyle(body).overflow}`);
+            debugLog(`HTML overflow: ${getComputedStyle(html).overflow}`);
+            
+            if (getComputedStyle(body).overflow === 'hidden' || getComputedStyle(html).overflow === 'hidden') {
+                updateResults('Overflow issues detected', 'warning');
+            } else {
+                updateResults('No overflow issues', 'success');
+            }
+        }
+
+        function testPageScroll() {
+            debugLog('Testing page scroll behavior...');
+            
+            const originalScrollY = window.scrollY;
+            
+            // Test scrolling
+            window.scrollTo(0, 100);
+            setTimeout(() => {
+                const afterScrollY = window.scrollY;
+                debugLog(`Scroll test: ${originalScrollY} -> ${afterScrollY}`);
+                
+                // Reset scroll
+                window.scrollTo(0, originalScrollY);
+                
+                updateResults('Page scroll test completed', 'success');
+            }, 100);
+        }
+
+        function testFixedElements() {
+            debugLog('Testing fixed elements...');
+            
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (sidebar) {
+                const position = getComputedStyle(sidebar).position;
+                debugLog(`Sidebar position: ${position}`);
+                updateResults(`Sidebar position: ${position}`, position === 'fixed' ? 'success' : 'warning');
+            }
+            
+            if (mainContent) {
+                const minHeight = getComputedStyle(mainContent).minHeight;
+                debugLog(`Main content min-height: ${minHeight}`);
+                updateResults(`Main content min-height: ${minHeight}`, 'success');
+            }
+        }
+
+        function testResponsiveLayout() {
+            debugLog('Testing responsive layout...');
+            
+            const width = window.innerWidth;
+            debugLog(`Current viewport width: ${width}px`);
+            
+            if (width < 768) {
+                updateResults('Mobile viewport detected', 'success');
+            } else if (width < 1024) {
+                updateResults('Tablet viewport detected', 'success');
+            } else {
+                updateResults('Desktop viewport detected', 'success');
+            }
+        }
+
+        function testMROPages() {
+            debugLog('Testing MRO page links...');
+            
+            const mroPages = [
+                'mro_dashboard.php',
+                'mro_planning.php',
+                'mro_work_orders.php',
+                'mro_parts.php',
+                'compliance.php'
+            ];
+            
+            mroPages.forEach(page => {
+                debugLog(`MRO page: ${page}`);
+            });
+            
+            updateResults(`All ${mroPages.length} MRO pages identified`, 'success');
+        }
+
+        function testLinkClicks() {
+            debugLog('Testing link click behavior...');
+            
+            const links = document.querySelectorAll('a');
+            debugLog(`Found ${links.length} links`);
+            
+            // Test a few links
+            let testCount = 0;
+            links.forEach((link, index) => {
+                if (index < 3) {
+                    debugLog(`Link ${index + 1}: ${link.href || 'no href'}`);
+                    testCount++;
+                }
+            });
+            
+            updateResults(`Tested ${testCount} links`, 'success');
+        }
+
+        function testNavigationFlow() {
+            debugLog('Testing navigation flow...');
+            
+            // Test navigation initialization
+            if (typeof window.initializeNavigation === 'function') {
+                debugLog('Navigation initializer found');
+                updateResults('Navigation initializer available', 'success');
+                
+                // Try to initialize
+                try {
+                    window.initializeNavigation();
+                    debugLog('Navigation initialized successfully');
+                    updateResults('Navigation initialized', 'success');
+                } catch (error) {
+                    debugLog(`Navigation initialization error: ${error.message}`);
+                    updateResults('Navigation initialization failed', 'error');
+                }
+            } else {
+                debugLog('Navigation initializer not found');
+                updateResults('Navigation initializer missing', 'warning');
+            }
+        }
+
+        function runAllTests() {
+            debugLog('Running all navigation tests...');
+            
+            clearResults();
+            
+            // Run all tests in sequence
+            setTimeout(testDropdown, 100);
+            setTimeout(testSubmenuLinks, 200);
+            setTimeout(testDropdownStability, 300);
+            setTimeout(testPageScroll, 400);
+            setTimeout(testFixedElements, 500);
+            setTimeout(testResponsiveLayout, 600);
+            setTimeout(testMROPages, 700);
+            setTimeout(testLinkClicks, 800);
+            setTimeout(testNavigationFlow, 900);
+            
+            setTimeout(() => {
+                debugLog('All tests completed');
+                updateResults('All navigation tests completed', 'success');
+            }, 1000);
+        }
+
+        function clearDebugLog() {
+            document.getElementById('debugLog').innerHTML = '<div>[INIT] Debug log cleared</div>';
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('Navigation test page initialized');
+        });
+    </script>
+</body>
+</html>

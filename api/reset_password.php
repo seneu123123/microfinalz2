@@ -25,7 +25,7 @@ try {
         echo "<h1>Success!</h1><p>Admin user created with email <b>$email</b> and password <b>$new_password</b></p>";
     }
     
-    echo "<br><a href='../login.html'>Go to Login Page</a>";
+    echo "<br><a href='../login.php'>Go to Login Page</a>";
 
 } catch (PDOException $e) {
     echo "<h1>Database Error</h1><p>" . $e->getMessage() . "</p>";

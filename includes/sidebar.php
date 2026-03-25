@@ -68,8 +68,9 @@
           <i data-lucide="chevron-down" class="submenu-icon"></i>
         </button>
         <div class="submenu" id="submenu-mro">
+          <a href="mro_dashboard.php" class="submenu-item"><i data-lucide="home"></i><span>MRO Dashboard</span></a>
           <a href="mro_planning.php" class="submenu-item"><i data-lucide="calendar"></i><span>Maintenance Planning</span></a>
-          <a href="mro.php" class="submenu-item"><i data-lucide="clipboard-list"></i><span>Work Order Management</span></a>
+          <a href="mro_work_orders.php" class="submenu-item"><i data-lucide="clipboard-list"></i><span>Work Order Management</span></a>
           <a href="mro_parts.php" class="submenu-item"><i data-lucide="settings"></i><span>Spare Parts and Supplies</span></a>
           <a href="compliance.php" class="submenu-item"><i data-lucide="shield-check"></i><span>Compliance and Safety</span></a>
         </div>

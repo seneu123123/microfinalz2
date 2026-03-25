@@ -150,13 +150,13 @@ function validateSession() {
         .then(data => {
             if (!data.success) {
                 clearSession();
-                window.location.href = '../login.html';
+                window.location.href = '../login.php';
             }
         })
         .catch(error => {
             console.error('Session validation error:', error);
             clearSession();
-            window.location.href = '../login.html';
+            window.location.href = '../login.php';
         });
 
     return true;

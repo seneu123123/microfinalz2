@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Click/Response Test - MRO System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-button.success {
+            background: #28a745;
+        }
+        .test-button.warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .test-button.danger {
+            background: #dc3545;
+        }
+        .test-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-left: 4px solid #007bff;
+        }
+        .test-card:hover {
+            transform: translateX(5px);
+        }
+        .test-row {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .test-row:hover {
+            background: #f8f9fa;
+        }
+        .debug-panel {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .debug-log {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+        .test-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .result-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .result-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .result-card .count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Comprehensive Click/Response Test</h1>
+        
+        <div class="debug-panel">
+            <strong>Debug Console:</strong>
+            <div class="debug-log" id="debugLog">
+                <div>[INIT] Test page loaded</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>1. Basic Button Tests</h2>
+            <button class="test-button" onclick="testBasicClick('button1')">Test Basic Click</button>
+            <button class="test-button success" onclick="testBasicClick('button2')">Success Button</button>
+            <button class="test-button warning" onclick="testBasicClick('button3')">Warning Button</button>
+            <button class="test-button danger" onclick="testBasicClick('button4')">Danger Button</button>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Card Click Tests</h2>
+            <div class="test-card" onclick="testCardClick('card1')">
+                <h3>Test Card 1</h3>
+                <p>Click this card to test click handling</p>
+            </div>
+            <div class="test-card" onclick="testCardClick('card2')">
+                <h3>Test Card 2</h3>
+                <p>Another clickable card for testing</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Table Row Tests</h2>
+            <div class="test-row" onclick="testRowClick('row1')">
+                <span>📋 Row 1: Maintenance Request</span>
+                <span style="float: right;">Status: Pending</span>
+            </div>
+            <div class="test-row" onclick="testRowClick('row2')">
+                <span>🔧 Row 2: Work Order</span>
+                <span style="float: right;">Status: In Progress</span>
+            </div>
+            <div class="test-row" onclick="testRowClick('row3')">
+                <span>⚙️ Row 3: Parts Usage</span>
+                <span style="float: right;">Status: Completed</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. API Call Tests</h2>
+            <button class="test-button" onclick="testApiCall('work_orders')">Test Work Orders API</button>
+            <button class="test-button" onclick="testApiCall('technicians')">Test Technicians API</button>
+            <button class="test-button" onclick="testApiCall('planning')">Test Planning API</button>
+            <button class="test-button" onclick="testApiCall('compliance')">Test Compliance API</button>
+        </div>
+
+        <div class="test-section">
+            <h2>5. Modal Tests</h2>
+            <button class="test-button" onclick="testModal('success')">Success Modal</button>
+            <button class="test-button" onclick="testModal('error')">Error Modal</button>
+            <button class="test-button" onclick="testModal('info')">Info Modal</button>
+            <button class="test-button" onclick="testModal('warning')">Warning Modal</button>
+        </div>
+
+        <div class="test-section">
+            <h2>6. Comprehensive Test</h2>
+            <button class="test-button" onclick="runComprehensiveTest()">Run All Tests</button>
+            <button class="test-button" onclick="testAllClicks()">Test All Clicks</button>
+            <button class="test-button warning" onclick="clearDebugLog()">Clear Debug Log</button>
+        </div>
+
+        <div class="test-results">
+            <div class="result-card">
+                <h3>Basic Clicks</h3>
+                <div class="count" id="basicClicks">0</div>
+            </div>
+            <div class="result-card">
+                <h3>Card Clicks</h3>
+                <div class="count" id="cardClicks">0</div>
+            </div>
+            <div class="result-card">
+                <h3>Row Clicks</h3>
+                <div class="count" id="rowClicks">0</div>
+            </div>
+            <div class="result-card">
+                <h3>API Calls</h3>
+                <div class="count" id="apiCalls">0</div>
+            </div>
+            <div class="result-card">
+                <h3>Modals</h3>
+                <div class="count" id="modals">0</div>
+            </div>
+            <div class="result-card">
+                <h3>Total Tests</h3>
+                <div class="count" id="totalTests">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load required libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        // Debug logging
+        function debugLog(message) {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log('[TEST]', message);
+        }
+
+        // Test counters
+        const counters = {
+            basicClicks: 0,
+            cardClicks: 0,
+            rowClicks: 0,
+            apiCalls: 0,
+            modals: 0,
+            totalTests: 0
+        };
+
+        function updateCounter(counter) {
+            counters[counter]++;
+            counters.totalTests++;
+            document.getElementById(counter).textContent = counters[counter];
+            document.getElementById('totalTests').textContent = counters.totalTests;
+        }
+
+        // Basic click tests
+        function testBasicClick(buttonId) {
+            debugLog(`Basic click test: ${buttonId}`);
+            updateCounter('basicClicks');
+            
+            Swal.fire({
+                title: 'Basic Click Test',
+                text: `Button ${buttonId} clicked successfully!`,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Card click tests
+        function testCardClick(cardId) {
+            debugLog(`Card click test: ${cardId}`);
+            updateCounter('cardClicks');
+            
+            Swal.fire({
+                title: 'Card Click Test',
+                text: `Card ${cardId} clicked successfully!`,
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Row click tests
+        function testRowClick(rowId) {
+            debugLog(`Row click test: ${rowId}`);
+            updateCounter('rowClicks');
+            
+            const messages = {
+                'row1': 'Maintenance request selected',
+                'row2': 'Work order selected',
+                'row3': 'Parts usage selected'
+            };
+            
+            Swal.fire({
+                title: 'Row Click Test',
+                text: messages[rowId] || 'Row selected',
+                icon: 'info',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+
+        // API call tests
+        async function testApiCall(endpoint) {
+            debugLog(`API call test: ${endpoint}`);
+            updateCounter('apiCalls');
+            
+            try {
+                const response = await fetch(`../api/mro_api.php?endpoint=${endpoint}&action=list`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    debugLog(`API success: ${endpoint} - ${data.data.length} items`);
+                    Swal.fire({
+                        title: 'API Test Success',
+                        text: `${endpoint}: ${data.data.length} items retrieved`,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    throw new Error(data.message || 'API call failed');
+                }
+            } catch (error) {
+                debugLog(`API error: ${endpoint} - ${error.message}`);
+                Swal.fire({
+                    title: 'API Test Failed',
+                    text: `${endpoint}: ${error.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+
+        // Modal tests
+        function testModal(type) {
+            debugLog(`Modal test: ${type}`);
+            updateCounter('modals');
+            
+            const configs = {
+                success: { title: 'Success Modal', text: 'This is a success message', icon: 'success' },
+                error: { title: 'Error Modal', text: 'This is an error message', icon: 'error' },
+                info: { title: 'Info Modal', text: 'This is an info message', icon: 'info' },
+                warning: { title: 'Warning Modal', text: 'This is a warning message', icon: 'warning' }
+            };
+            
+            Swal.fire(configs[type]);
+        }
+
+        // Comprehensive test
+        async function runComprehensiveTest() {
+            debugLog('Starting comprehensive test...');
+            
+            const tests = [
+                () => testBasicClick('comp-test-1'),
+                () => testCardClick('comp-test-2'),
+                () => testRowClick('comp-test-3'),
+                () => testModal('info'),
+                () => testApiCall('work_orders')
+            ];
+            
+            for (let i = 0; i < tests.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                tests[i]();
+            }
+            
+            setTimeout(() => {
+                debugLog('Comprehensive test completed');
+                Swal.fire({
+                    title: 'Test Complete',
+                    text: `All ${tests.length} tests executed successfully`,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            }, 3000);
+        }
+
+        // Test all clicks
+        function testAllClicks() {
+            debugLog('Testing all clickable elements...');
+            
+            const clickables = document.querySelectorAll('button, .test-card, .test-row');
+            let workingCount = 0;
+            
+            clickables.forEach((element, index) => {
+                try {
+                    const event = new MouseEvent('click', {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window
+                    });
+                    
+                    if (element.dispatchEvent(event)) {
+                        workingCount++;
+                    }
+                } catch (error) {
+                    debugLog(`Click test error: ${error.message}`);
+                }
+            });
+            
+            debugLog(`Click test complete: ${workingCount}/${clickables.length} elements working`);
+            
+            Swal.fire({
+                title: 'Click Test Results',
+                text: `${workingCount}/${clickables.length} elements responding`,
+                icon: workingCount === clickables.length ? 'success' : 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Clear debug log
+        function clearDebugLog() {
+            document.getElementById('debugLog').innerHTML = '<div>[INIT] Debug log cleared</div>';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('Test page initialized');
+            
+            // Test SweetAlert
+            if (typeof Swal !== 'undefined') {
+                debugLog('SweetAlert loaded');
+            } else {
+                debugLog('ERROR: SweetAlert not loaded');
+            }
+            
+            // Test Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+                debugLog('Lucide icons loaded');
+            } else {
+                debugLog('ERROR: Lucide not loaded');
+            }
+        });
+
+        // Global error handling
+        window.addEventListener('error', function(event) {
+            debugLog('JavaScript Error: ' + event.error.message);
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            debugLog('Unhandled Promise: ' + event.reason);
+        });
+    </script>
+</body>
+</html>

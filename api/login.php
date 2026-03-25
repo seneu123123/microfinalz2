@@ -68,6 +68,13 @@ function handleLogin() {
         sendResponse(false, 'Failed to generate OTP');
     }
     
+    // Also save OTP directly into users table
+    $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+    $updStmt = $conn->prepare("UPDATE users SET otp_token = ?, otp_expires_at = ? WHERE id = ?");
+    $updStmt->bind_param("ssi", $otp, $expiresAt, $user['id']);
+    $updStmt->execute();
+    $updStmt->close();
+    
     // Send OTP email
     $emailSent = sendOtpEmail($user['email'], $otp, $user['name']);
     
@@ -214,6 +221,13 @@ function handleResendOTP() {
         sendResponse(false, 'Failed to store OTP');
     }
     
+    // Also update users table otp columns
+    $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+    $updStmt = $conn->prepare("UPDATE users SET otp_token = ?, otp_expires_at = ? WHERE id = ?");
+    $updStmt->bind_param("ssi", $otp, $expiresAt, $user['id']);
+    $updStmt->execute();
+    $updStmt->close();
+    
     // Send OTP email
     $emailSent = sendOtpEmail($user['email'], $otp, $user['name']);
     
@@ -227,16 +241,4 @@ function handleResendOTP() {
     }
 }
 
-function sendResponse($success, $message, $data = []) {
-    $response = [
-        'success' => $success,
-        'message' => $message,
-    ];
-    if (!empty($data)) {
-        $response['data'] = $data;
-    }
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit;
-}
 ?>
